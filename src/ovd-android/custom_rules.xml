@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <target name="-pre-build">
+    <exec executable="./extractXML.py" failonerror="true">
+      <arg value="--xml"/>
+      <arg value="res/values/strings.xml"/>
+      <arg value="--po-dir"/>
+      <arg value="${po.dir}"/>
+      <arg value="--quiet"/>
+    </exec>
+    <if condition="${build.is.packaging.debug}">
+      <then>
+        <exec executable="${ndk.dir}/ndk-build" failonerror="true" >
+          <arg value="-j"/>
+          <arg value="8"/>
+          <arg value="DEBUG_ON=1"/>
+        </exec>
+      </then>
+      <else>
+        <exec executable="${ndk.dir}/ndk-build" failonerror="true" >
+          <arg value="-j"/>
+          <arg value="8"/>
+        </exec>
+      </else>
+    </if>
+    <exec executable="make" failonerror="true">
+      <arg value="-C"/>
+      <arg value="res-svg"/>
+    </exec>
+  </target>
+  
+  <target name="-pre-clean" >
+    <exec executable="${ndk.dir}/ndk-build" failonerror="true" >
+      <arg value="clean"/>
+    </exec>
+    <delete dir="${native.libs.absolute.dir}/armeabi" verbose="${verbose}" />
+    <delete dir="${native.libs.absolute.dir}/armeabi-v7a" verbose="${verbose}" />
+    <delete dir="${native.libs.absolute.dir}/x86" verbose="${verbose}" />
+    <delete verbose="true" includeemptydirs="true">
+      <fileset dir="${resource.absolute.dir}" includes="**/values-*/*.xml"/>
+      <fileset dir="${resource.absolute.dir}" includes="**/drawable-*/*.png"/>
+    </delete>
+    <delete dir="obj" verbose="${verbose}" />
+  </target>
+</project>

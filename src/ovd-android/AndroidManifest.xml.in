@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.ulteo.ovd"
+    android:installLocation="auto"
+    android:versionCode="%VERSION-CODE%"
+    android:versionName="%VERSION%" >
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    
+    <meta-data
+        android:name="com.google.android.backup.api_key"
+        android:value="%BACKUP-KEY%" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:allowBackup="%CAN_BACKUP%"
+        android:backupAgent="OvdBackupAgent"
+        android:label="@string/app_name" %CAN_DEBUG%>
+        <activity
+            android:name=".MainWindow"
+            android:theme="@android:style/Theme.Holo"
+            android:label="@string/Home_title" android:logo="@drawable/logo_ulteo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AndRdpActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:label="@string/app_name"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Holo"/>
+        <activity android:name="Settings"
+            android:theme="@android:style/Theme.Holo"
+            android:label="@string/Home_title" android:logo="@drawable/logo_ulteo"/>
+
+        <activity android:name="UriLoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ovd" />
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="ovd" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

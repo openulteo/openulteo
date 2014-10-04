@@ -1,0 +1,39 @@
+/*
+ * Copyright (C) 2012-2014 Ulteo SAS
+ * http://www.ulteo.com
+ * Author David PHAM-VAN <d.pham-van@ulteo.com> 2012-2014
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+package org.ulteo.ovd;
+
+public final class Config {
+	public final static boolean DEBUG = %DEBUG% && BuildConfig.DEBUG;
+	public final static boolean PREMIUM = %PREMIUM%;
+	public final static boolean SAVE_PASSWORD = true;
+	public final static String SERVICE_SUFFIX = "";
+	public final static String SERVICE_SUFFIX_ALT = ".php";
+	public final static String TAG = "andrdp";
+	public final static String COPYRIGHT = "© Ulteo SAS %YEAR%";
+	public final static String VERSION = "OVD % - " + COPYRIGHT;
+	public static final String WEBSITE = "http://www.ulteo.com";
+	public static final String SDCARD = "sdcard";
+	public static final float MAX_ZOOM = 3.0f;
+	public static final int SYSTEM_UI_DIM_TIME = 3000;
+	public static final int ACTION_BAR_DIM_TIME = 7000;
+	public static final long SM_STATUS_INIT_UPATE_TIME = 1000;
+	public static final int SM_STATUS_UPDATE_TIME = 60000;
+}

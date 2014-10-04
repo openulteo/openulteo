@@ -1,0 +1,122 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2010-2013 Ulteo SAS
+# http://www.ulteo.com
+# Author Samuel BOVEE <samuel@ulteo.com> 2010
+# Author Julien LANGLOIS <julien@ulteo.com> 2010
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2012, 2013
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import os
+import subprocess
+import time
+from optparse import OptionParser
+
+def replace_in_file(path, source, params, dest=None):
+	f = file(os.path.join(path, source), "r")
+	content = f.read()
+	f.close()
+	
+	for key, val in params.iteritems():
+		content = content.replace("%" + key + "%", val)
+	
+	if dest == None:
+		dest = source.replace(".in", "")
+	
+	f = file(os.path.join(path, dest), "w")
+	f.write(content)
+	f.close()
+
+if __name__=="__main__":
+	parser = OptionParser()
+	parser.add_option("-r", "--release", dest="build_type", action="store_const", const="release", help="Configure the build as release")
+	parser.add_option("-d", "--debug", dest="build_type", action="store_const", const="debug", help="Configure the build as debug")
+	parser.add_option("-p", "--path", dest="path", action="store", default=".", help="Path of the sources")
+	parser.add_option("-v", "--version", dest="version", action="store", default="99.99", help="Set the version string")
+	parser.add_option("-c", "--version-code", dest="version_code", action="store", default=1, type="int", help="Set the version code number")
+	parser.add_option("-s", "--sdk-dir", dest="sdk_dir", action="store", default="../android-sdk-linux", help="Set the path of the Android SDK")
+	parser.add_option("-n", "--ndk-dir", dest="ndk_dir", action="store", default="../android-ndk", help="Set the path of the Android NDK")
+	parser.add_option("-k", "--keystore", dest="keystore", action="store", default="ulteo-certificate", help="Set the signing key store")
+	parser.add_option("-a", "--keystore-alias", dest="keyalias", action="store", default="ulteo-certificate", help="Set the signing key alias")
+	parser.add_option("-b", "--backup-api-key", dest="backupkey", action="store", default=None, help="Set the backup api key")
+	parser.add_option("--keystore-passwd", dest="keystore_passwd", action="store", default="1234", help="Set the signing key store password")
+	parser.add_option("--keystore-alias-passwd", dest="keyalias_passwd", action="store", default="1234", help="Set the signing key alias password")
+	parser.add_option("-t", "--translations", dest="po_dir", action="store", default="uovdclient", help="Set the ovd translations path")
+	(options, args) = parser.parse_args()
+	
+	params = {}
+	
+	params["PDF_SPOOL_DIR"] = "\"/data/data/org.ulteo.ovd/cache\""
+	
+	# Detect the version
+	if os.environ.has_key("OVD_VERSION"):
+		params["VERSION"] = os.environ["OVD_VERSION"]
+	else:
+		params["VERSION"] = options.version
+	
+	params["VERSION-CODE"] = str(options.version_code)
+	params["BACKUP-KEY"] = str(options.backupkey)
+	if options.backupkey:
+		params["CAN_BACKUP"] = "true"
+	else:
+		params["CAN_BACKUP"] = "false"
+	
+	if options.build_type == "debug":
+		params["DEBUG"] = "true"
+		params["CAN_DEBUG"] = "android:debuggable=\"true\""
+	elif options.build_type == "release":
+		params["DEBUG"] = "false"
+		params["CAN_DEBUG"] = ""
+	else:
+		parser.error("build type option requiered")
+	
+	if os.path.isdir("src/org/ulteo/ovd/premium"):
+		params["PREMIUM"] = "true"
+	else:
+		params["PREMIUM"] = "false"
+	
+	params["YEAR"] = str(time.localtime().tm_year)
+
+	replace_in_file(options.path, "AndroidManifest.xml.in", params)
+	replace_in_file(options.path, "Config.java.in", params, "src/org/ulteo/ovd/Config.java")
+	replace_in_file(options.path, "jni/andrdp/urdp_config.h.in", params)
+	
+	# Replace build.xml and local.properties
+	lp = os.path.join(options.path, "local.properties")
+	if os.path.isfile(lp):
+		os.unlink(lp)
+	subprocess.call([os.path.join(options.sdk_dir, "tools", "android"), "update", "project", "--path", options.path, "--name", "Ulteo"])
+	f=file(lp, "a")
+	f.write("ndk.dir=%s\n" % options.ndk_dir)
+	f.write("po.dir=%s\n" % options.po_dir)
+	f.close()
+	
+	asp = os.path.join(options.path, "libs", "android-support-v4.jar")
+	if not os.path.isdir(os.path.dirname(asp)):
+		os.makedirs(os.path.dirname(asp))
+	if os.path.islink(asp):
+		os.unlink(asp)
+	if not os.path.isfile(asp):
+		os.symlink(os.path.join(os.path.abspath(options.sdk_dir), "extras", "android", "support", "v4", "android-support-v4.jar"), asp)
+	
+	if options.build_type == "release" and (options.keystore and options.keyalias and options.keystore_passwd and options.keyalias_passwd):
+		f=file(os.path.join(options.path, "ant.properties"), "w")
+		f.write("key.store=%s\n" % options.keystore)
+		f.write("key.alias=%s\n" % options.keyalias)
+		f.write("key.store.password=%s\n" % options.keystore_passwd)
+		f.write("key.alias.password=%s\n" % options.keyalias_passwd)
+		f.close()
