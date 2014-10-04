@@ -1,0 +1,8 @@
+#!/bin/sh
+
+getent group tsusers >/dev/null || groupadd tsusers
+chgrp tsusers /var/spool/xrdp
+
+#DEBHELPER#
+
+exit 0

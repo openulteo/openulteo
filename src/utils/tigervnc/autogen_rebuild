@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Copyright (C) 2013 Ulteo SAS
+# http://www.ulteo.com
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2013
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# apt-get install libfltk-dev wget libtool cmake libxft-dev libxinerama-dev libxcursor-dev libjpeg-dev libexpat1-dev libssl-dev
+
+set -x
+set -e
+
+VERSION=tigervnc-orig-$(cat VERSION | head -n 1)
+XORG_VERSION=7.4
+
+unset LANG
+
+pushd ${VERSION}
+
+unix/build-xorg rebuild -version ${XORG_VERSION} -parallel
+
+popd

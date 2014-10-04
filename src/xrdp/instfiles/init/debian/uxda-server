@@ -1,0 +1,131 @@
+#!/bin/sh
+
+# xrdp control script
+# Written : 1-13-2006 - Mark Balliet - posicat@pobox.com
+# maintaned by Jay Sorg
+# Author David LECHEVALIER <david@ulteo.com> 2010
+# Author Samuel BOVEE <samuel@ulteo.com> 2010-2011
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2012
+# chkconfig: 2345 11 89
+# description: starts xrdp
+
+### BEGIN INIT INFO
+# Provides:          xrdp
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start xrdp daemon
+# Description:       Provide rdp support.
+### END INIT INFO
+
+SBINDIR=/usr/sbin
+CFGDIR=/etc/xrdp
+LOGDIR=/var/log/xrdp
+SPOOLDIR=/var/spool/xrdp
+PIDDIR=/var/run
+LOGDIR=/dev/null
+
+BINARIES="xrdp-logd xrdp xrdp-sesman"
+
+if [ -f "/usr/sbin/xrdp-printerd" ]; then
+  BINARIES="$BINARIES xrdp-printerd"
+fi
+
+. /lib/lsb/init-functions
+
+for exe in $(for i in $BINARIES; do echo /usr/sbin/$i; done) $CFGDIR/startwm.sh; do
+    if ! [ -x "$exe" ]; then
+      log_warning_msg "$exe is not executable"
+      exit 1
+    fi
+done
+
+is_daemon_running()
+{
+  DAEMON=$1
+  PID=$PIDDIR/$DAEMON.pid
+  [ -f $PID ] || return 1
+  if ! kill -0 $(cat $PID) 2>$LOGDIR; then
+    rm $PID
+    return 2
+  fi
+}
+
+xrdp_start()
+{
+  xrdp-logoff all
+  FAILED=0
+  for exe in $BINARIES; do
+    if is_daemon_running $exe; then
+      FAILED=1
+      log_warning_msg "$exe is already loaded"
+    fi
+  done
+  if [ $FAILED -eq 1 ]; then
+    log_failure_msg "Do not try to launch another daemon !"
+    exit 1
+  fi
+  for exe in $BINARIES; do
+      log_daemon_msg "Starting $exe"
+      if start-stop-daemon --start --quiet --oknodo --pidfile $PIDDIR/$exe.pid \
+                           --exec $SBINDIR/$exe -- >$LOGDIR
+      then
+        log_end_msg 0
+      else
+        log_end_msg 1
+      fi
+  done
+}
+
+xrdp_stop()
+{
+  xrdp-logoff all
+  for exe in $(echo $BINARIES | tac -s ' '); do
+      log_begin_msg "Stopping $exe"
+      if ! is_daemon_running $exe; then
+          log_progress_msg " (not loaded)"
+          log_end_msg 1
+          continue
+      fi
+      if start-stop-daemon --stop --quiet --oknodo \
+                           --pidfile $PIDDIR/$exe.pid --retry 30
+      then
+        log_end_msg 0
+      else
+        log_end_msg 1
+      fi
+  done;
+}
+
+
+case "$1" in
+
+  start)
+    xrdp_start
+  ;;
+
+  stop)
+    xrdp_stop
+  ;;
+
+  force-reload|restart)
+    log_success_msg "Restarting xrdp..."
+    xrdp_stop
+    xrdp_start
+  ;;
+
+  status)
+    for exe in $BINARIES; do
+        status_of_proc -p "$PIDDIR/$exe.pid" "$exe" $exe || exit $?
+    done
+  ;;
+
+  *)
+    log_success_msg "Usage: /etc/init.d/xrdp {start|stop|restart|force-reload|status}"
+    exit 1
+  ;;
+
+esac
+
+exit 0

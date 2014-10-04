@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>Frequently Asked Questions</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+
+  <para>
+    The purpose of this documentation is to describe the protocols
+    used by <emphasis>Ulteo Open Virtual Desktop</emphasis>.
+  </para>
+
+  <section id="report_bug">
+    <title>How can I report a bug?</title>
+    <para>
+      Send an email to <email>report-ovd-bugs@ulteo.com</email> with a
+      description of your bug.
+    </para>
+    <para>
+      Please attach those files :
+      <itemizedlist>
+	<listitem><para>
+	  Session Manager: 
+	  <itemizedlist>
+	    <listitem><para>
+	      <emphasis>/var/log/ulteo/sessionmanager/main.log</emphasis>
+	    </para></listitem>
+	  </itemizedlist>
+	</para></listitem>
+	<listitem><para>
+	  Linux Application server:
+	  <itemizedlist>
+	    <listitem><para>
+	      <emphasis>/opt/ulteo/var/log/ulteo/ovd/slaveserver.log</emphasis>
+	    </para></listitem>
+	  </itemizedlist>
+	</para></listitem>
+
+	<listitem><para>
+	  Windows server:
+	  <itemizedlist>
+	    <listitem><para>
+	      <emphasis>C:\Documents and Settings\All Users\Application Data\ulteo\ovd\log\slaveserver.log</emphasis>
+	    </para></listitem>
+	  </itemizedlist>
+	</para></listitem>
+
+	<listitem><para>
+	  config file:
+	  <itemizedlist>
+	    <listitem><para>
+	      session manager: <emphasis>/var/spool/ulteo/sessionmanager/config</emphasis>
+	    </para></listitem>
+	    <listitem><para>
+	      application server: <emphasis>/opt/ulteo/etc/ulteo/ovd/slaveserver.conf</emphasis>
+	    </para></listitem>
+	  </itemizedlist>
+	</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <!--
+  <section>
+    <title>How can I add a language ?</title>
+    <para>
+      You have to modify a file
+      <emphasis>includes/defaults.inc.php</emphasis> on the Session
+      Manager code.
+    </para>
+    <para>
+      In a classic install, the Session Manager files are stored into
+      <emphasis>/use/share/ulteo/sessionmanager</emphasis>.
+    </para>
+    <para>
+      The default file:
+      <programlisting><![CDATA[
+      $list_languages = array(
+      'en_GB.UTF-8'	=>	'English',
+      'fr_FR.UTF-8'	=>	'French'
+      );
+      $desktop_locale = 'en_GB.UTF-8';]]>
+      </programlisting>
+    </para>
+
+    <para>
+      Add your lang to the array. For instance, Nederlands:
+
+      <programlisting><![CDATA[
+      $list_languages = array(
+      'en_GB.UTF-8'	=>	'English',
+      'nl_NL.UTF-8'	=>	'Nederlands'
+      'fr_FR.UTF-8'	=>	'Français'
+      );
+      $desktop_locale = 'en_GB.UTF-8';]]>
+      </programlisting>
+    </para>
+
+    <para>
+      You can also change the desktop_locale.
+      <programlisting><![CDATA[
+      $desktop_locale = 'nl_NL.UTF-8';]]>
+      </programlisting>
+    </para>
+
+
+    <para>
+      You also have to add install NL lang pack on application server
+
+      To do it, go manage your server, type **** on field "install"
+    </para>
+
+  </section>
+  -->
+
+  <section id="file_upload">
+    <title>Where is the file upload button on OVD ?</title>
+    <para>
+      The <emphasis>file upload</emphasis> feature is not available in
+      OVD. But you can mount a network filesystem (CIFS, NFS...) for the purpose of sharing 
+      files.
+    </para>
+
+    <simplesect>
+      <title>
+	We are interested in better understanding customer needs to have a
+	file transfer capability in OVD.
+      </title>
+      <para>
+	We believe there are two typical use cases regarding
+	user data within OVD:
+	<itemizedlist>
+	  <listitem><para> 
+	    either you are using CIFS or NFS so user
+	    home folders are mounted from the CIFS or NFS servers
+	  </para></listitem>
+	  <listitem><para>
+	    or you are using the "local filesystem" on
+	    ApS servers. This is only intended for testing purpose
+	    since if you have several ApS servers, the user home folder won't 
+	  be synchronized between servers </para></listitem>
+	</itemizedlist>
+      </para>
+
+      <para>
+	As a result, if you are using CIFS or NFS, the user is likely
+	to already have access to his directory to store his own files
+	on a NFS or CIFS server. So in that case, having a file transfer
+	button is redundant since the user can retrieve user data
+	in OVD through the mounted directory.
+      </para>
+
+      <para>
+	If you are using the local ApS filesystem, it could make more
+	sense to be able to transfer files, but again this setup should really only 
+    be used for testing purposes only.
+      </para>
+
+    </simplesect>
+
+  </section>
+
+  <section id="no_available_server">
+    <title>
+      Why did I got a 'No available server' message when I wanted to launch
+      a session?
+    </title>
+    <para>
+      You have to check 2 points:
+      <itemizedlist>
+	<listitem><para>
+	  Do you have at least one Application Server online AND set in
+	  production mode?
+	</para></listitem>
+	<listitem><para>
+	  Did you publish at least one application? (check the summary:
+	  <ulink url="http://myserver/ovd/admin/sumup.php"/>)
+	</para></listitem>
+      </itemizedlist>
+    </para>
+  </section>
+
+  <section  id="aps_not_appear">
+    <title>
+      Why does my Application server not appear in the Session Manager
+      server list?
+    </title>
+    <itemizedlist>
+      <listitem><para>
+	check that the DNS is configured correctly
+      </para></listitem>
+      <listitem><para>
+	check if the server is authorized, did you set the right
+	"Authorized network domain"
+      </para></listitem>
+    </itemizedlist>
+  </section>
+
+
+  <section id="check_dns_config">
+    <title>How to check the DNS configuration?</title>
+    <para>
+      Check your DNS configuration using these commands:
+      <itemizedlist>
+	<listitem><para>
+	  On an application server:
+	  <screen>
+<![CDATA[$ getent hosts sm.test.demo]]>
+	  </screen>
+
+	  <screen>
+<![CDATA[$ getent hosts the_ip_returned_from_the_previous_command]]>
+	  </screen>
+	</para></listitem>
+
+	<listitem><para>
+	  On a Session Manager:
+
+	  <screen>
+<![CDATA[$ getent hosts my_application_server]]>
+	  </screen>
+
+	  <screen>
+<![CDATA[$ getent hosts the_ip_returned_from_the_previous_command]]>
+	  </screen>
+	</para></listitem>
+      </itemizedlist>
+    </para>
+
+    <para>
+      The reverse DNS must be the same between the two sets of commands
+      as you can see in the following example:
+      <programlisting>
+<![CDATA[$ getent hosts sm.test.demo
+192.168.0.19    sm.test.demo
+$ getent hosts 192.168.0.19
+192.168.0.19    sm.test.demo]]>
+      </programlisting>
+    </para>
+  </section>
+
+  <section id="ports">
+    <title>
+      What ports does Ulteo Open Virtual Desktop @VERSION@ use?
+    </title>
+    <para>
+       All ports are TCP
+    </para>
+    
+	<itemizedlist>
+		<listitem>
+			<para>
+				SessionManager: 
+				<itemizedlist>
+					<listitem>
+						<para>
+							80 (HTTP): communication with administrator
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							443 (HTTPS): communication with administrator
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							1111 (HTTP): communication with slaveserver
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</listitem>
+		
+		<listitem>
+			<para>
+				WebPortal: 
+				<itemizedlist>
+					<listitem>
+						<para>
+							80 (HTTP): communication with end user
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							443 (HTTPS): communication with end user
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</listitem>
+		
+		<listitem>
+			<para>
+				ApplicationServer: 
+				<itemizedlist>
+					<listitem>
+						<para>
+							1112 (HTTP): communication with SessionManager
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							3389 (RDP): communication with end user
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</listitem>
+		
+		<listitem>
+			<para>
+				Fileserver: 
+				<itemizedlist>
+					<listitem>
+						<para>
+							1112 (HTTP): communication with SessionManager
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							1113 (HTTP): communication with ApplicationServer
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							445 (CIFS): communication with ApplicationServer
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				Gateway: 
+				<itemizedlist>
+					<listitem>
+						<para>
+							1112 (HTTP): communication with SessionManager
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							443 (HTTPS): communication with end user
+						</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</listitem>
+	</itemizedlist>
+</section>
+
+
+
+
+  <section id="class_not_found">
+    <title>Why do I get a "Class XXXX not found"?</title>
+    <para>
+      If you are sure of your configuration, it's possibly a bug,
+      <link linkend="report_bug">please report it to us</link>.
+      
+
+    </para>
+  </section>
+
+  <section id="aps_daemon_start_error">
+    <title>
+      Why do I get this error after installing an Application
+      Server?
+    </title>
+
+     <programlisting>
+<![CDATA[  * Starting Ulteo OVD SlaveServer
+chroot: cannot change root directory to /etc/init.d/ulteo-ovd-slaveserver: No
+such file or directory]]>
+     </programlisting>
+
+     <para>
+       Check if you have a correct installation:  does Ulteo's
+       chroot exist? (by default it is /opt/ulteo)
+     </para>
+  </section>
+
+  <section id="detect_ie_outlook">
+    <title>
+      Why are Internet Explorer and Outlook Express not detected on my
+      Windows Application Server ?
+    </title>
+
+    <para>
+      Internet Explorer and Outlook Express shortcuts are not
+      installed in the <emphasis>All Users</emphasis> start menu
+      folder so Ulteo OVD cannot detect them.
+    </para>
+
+    <para>
+      The easiest way to have Internet Explorer and Outlook Express
+      icons appear as applications from the OVD administration console
+      is to copy the Windows shortcuts into the <emphasis>All
+      Users</emphasis> start menu folder and restart the OVD service.
+    </para>
+  </section>
+
+  <section id="session_recovery">
+    <title>
+      Why don't I recover my session when I exit it without log off ?
+      Is there any session recovery in Ulteo OVD ?
+    </title>
+
+    <para>
+      In Ulteo OVD 3, a desktop session can be recovered when configured in the OVD
+      Administration Console.      
+    </para>
+    <para>
+      In OVD 4, the session recovery capability was extended to also provide session
+      recovery for seamless applications (Portal Mode). The concept of session roaming
+      was also introduced which allows a user to reconnect with a different device. 
+      In this case, OVD will resize the sesssion to suit the new display characteristics.
+    </para>
+    <para>
+      From the <emphasis>Configuration</emphasis> page, go into
+      <emphasis>Session settings</emphasis> and set
+      <emphasis>Yes</emphasis> on the <emphasis role="strong">Sessions
+      are persistent</emphasis> settings.
+      <!--TBD What are the settings for portal mode-->
+    </para>
+  </section>
+  
+  <section id="grey_link">
+    <title>
+      When I launch a portal, I see applications but I cannot launch them. There are grey links instead.
+    </title>
+
+    <para>
+      Portal applications remain grey until the Application Server's session is available. The session may never be up and running due to:
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Firewall issue: read <ulink url="#ports">ports used by OVD @VERSION@</ulink>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Wrong redirection name: check if <ulink url="img/sm_admin_external_name.png">the redirection name</ulink> is available for the end user.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
+  <xi:include href="colophon.xml" />
+</article>

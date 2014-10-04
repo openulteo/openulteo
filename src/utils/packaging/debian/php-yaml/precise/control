@@ -1,0 +1,18 @@
+Source: php-yaml
+Section: web
+Priority: optional
+Maintainer: 
+Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php5-dev, libyaml-dev
+Standards-Version: 3.8.1
+
+Package: php5-yaml
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Description: yaml module for PHP 5
+ YAML-1.1 parser and emitter
+ .
+ Support for YAML 1.1 (YAML Ain't Markup Language) serialization
+ using the
+   LibYAML library.
+
+

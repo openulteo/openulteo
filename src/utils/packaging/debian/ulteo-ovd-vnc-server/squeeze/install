@@ -1,0 +1,2 @@
+bin/xovdvnc /usr/bin
+lib/dri/* /usr/lib/ovdvnc_dri

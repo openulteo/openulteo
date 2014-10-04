@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+DEB_PYTHON_SYSTEM := pycentral
+DEB_PYTHON_COMPILE_VERSION = 2.6
+DEB_PYTHON_MODULE_PACKAGES = uxda-server-python
+
+include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
+
+DEB_SHLIBDEPS_INCLUDE_seamless-uxda-server-shell := $(CURDIR)/debian/uxda-server/usr/lib/xrdp
+DEB_DH_MAKESHLIBS_ARGS_uxda-server-sound := --noscripts
+DEB_UPDATE_RCD_PARAMS_uxda-server := "defaults 90 10"
+
+binary-install/uxda-server:: DEB_DH_INSTALLINIT_ARGS := --onlyscripts

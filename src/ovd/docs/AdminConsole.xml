@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+	  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>Administration Console guide</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+
+  <para>
+    Ulteo OVD is configured by a web interface
+    called the <emphasis role="strong">Administration Console</emphasis>
+    or just <emphasis role="strong">console</emphasis>.  It is
+    installed on and part of the Ulteo Session Manager.
+  </para>
+  <para>
+    This documentation describes the features available on the console
+    from the main menu, page per page.
+  </para>
+
+  <screenshot>
+    <screeninfo>Console main page</screeninfo>
+    <graphic fileref="img/sm_admin_main.png"></graphic>
+  </screenshot>
+
+
+  <section>
+    <title>Log into the console</title>
+
+    <para>
+      As you probably noticed at installation time, the console is
+      available using a web browser by entering the following
+      URL <ulink>http://ip.or.host/ovd/admin/</ulink> where
+      <emphasis>ip.or.host</emphasis> is the name or IP address of the
+      machine where you installed the Session Manager.
+    </para>
+
+    <screenshot>
+      <screeninfo>Console admin login</screeninfo>
+      <graphic fileref="img/sm_www_admin_login.png"></graphic>
+    </screenshot>
+
+    <para>
+      You can log in with the admin account. You can also log in with
+      OVD users if you priorly authorized them, as we'll see later in
+      that documentation.
+    </para>
+
+    <para>
+      Once logged in, you are redirected to the main page. This page is
+      just a shortcut to some system information. Let's follow the menu.
+    </para>
+  </section>
+  
+  <section>
+    <title>Server Management</title>
+    <para>
+      This category is about Application Servers (ApS) management. 
+      It includes the <emphasis>Shared Folders</emphasis> page.
+    </para>
+
+    <section>
+      <title>Servers page</title>
+
+      <para>
+        In the first page, you can see the list of Application
+        Server that are plugged to your Session Manager and additional details.
+      </para>
+
+      <para>
+        By clicking the FQDN link or 
+        the <emphasis>Manage</emphasis> button, you enter 
+        a <emphasis>manage</emphasis> page that provides full details for
+        a specific server.
+      </para>
+
+    <screenshot>
+      <screeninfo>Servers page</screeninfo>
+      <graphic fileref="img/admin-console/servers.png"></graphic>
+    </screenshot>
+
+      <simplesect>
+        <title>Specific server management</title>
+       
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>Number of available sessions on this
+                server:</emphasis> This value is not a limit for each
+                Application Server. It's a value used by the load
+                balancer, as we'll see later.
+            </para>
+          </listitem>
+          <listitem>
+            <para><emphasis>Redirection name of that
+                server:</emphasis> this is used to launch
+                sessions. When you launch a session, you are redirected
+                to an Application Server using the redirection name as
+                redirection. In some cases, the default redirection
+                name (the FQDN you provided during the ApS installation) is
+                not valid. For instance, if you setup a private IP
+                address and want to connect from the Internet.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              The maintenance/production box is a status information. This status is
+              used to keep some servers online and ready to use on
+              maintenance to be sure that no sessions are going to be
+              started. For instance, it's useful when perfoming a software upgrade.
+            </para>
+          </listitem>
+        </itemizedlist>
+
+        <para>
+          For Linux applications, it is possible to install additional
+          applications directly from the console by entering a package
+          name.  It's also possible to ask for a global upgrade. It
+          will perform an application and Ulteo software upgrade for
+          security and bugfixes.
+        </para>
+      </simplesect>
+    </section>
+
+    <section>
+      <title>Unregistered servers page</title>
+
+      <para>
+	An Application server is unregistered
+	until an admin registers it by clicking
+	the <emphasis>register button</emphasis>.
+      </para>
+    </section>
+
+    <section>
+      <title>Tasks page</title>
+
+      <para>
+        At the moment, it is only available for Linux servers. A task is a
+        request to an Application Server to install or remove an
+        application as we discussed on the servers page.
+      </para>
+
+      <para>
+        This page is listing known tasks and their status.
+      </para>
+    </section>
+
+    <section>
+      <title>Shared folders page</title>
+
+      <para>
+        Shared folders is a feature that allows members of the same User Group
+        to work together on a virtual drive.
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            First, create a new folder
+          </para>
+          <screenshot>
+            <screeninfo>Create a shared folder</screeninfo>
+            <graphic fileref="img/admin-console/sharedfolder1.png"></graphic>
+          </screenshot>
+        </listitem>
+
+        <listitem>
+          <para>
+            Then click on it
+          </para>
+          <screenshot>
+            <screeninfo>select the shared folder</screeninfo>
+            <graphic fileref="img/admin-console/sharedfolder2.png"></graphic>
+          </screenshot>
+        </listitem>
+
+        <listitem>
+          <para>
+            And authorize some User Groups to have access to it
+          </para>
+          <screenshot>
+            <screeninfo>authorize User Groups to access the shared folder</screeninfo>
+            <graphic fileref="img/admin-console/sharedfolder3.png"></graphic>
+          </screenshot>
+        </listitem>
+      </itemizedlist>
+
+      <important>
+        <para>
+          In order to use that feature, you have to choose the
+          "Internal WebDAV" filesystem for user's data. In order to do
+          that, click the "Enable Internal WebDAV filesystem" button
+          in the Shared Folders page.
+        </para>
+      </important>
+    </section>
+  </section>
+
+  <section>
+    <title>Users</title>
+    <para>
+      This category is about Users and the User Groups.
+    </para>
+    <para>
+      Each user is shown with his login, his display name, his user ID (uid) and
+      all other extra fields from the user database.
+    </para>
+
+    <para>
+      You can get more information about a User either by clicking
+      the <emphasis>Manage</emphasis> button or by clicking the
+      user login hyperlink.
+    </para>
+
+    <screenshot>
+      <screeninfo>Users page</screeninfo>
+      <graphic fileref="img/admin-console/users.png"></graphic>
+    </screenshot>
+
+    <section>
+      <title>Manage a user</title>
+      <para>
+	On this page, you can modify each user attribute if the user database is writable. 
+	At the moment only the MySQL module is writable.
+      </para>
+      <para>
+	The list of User Groups that contain this user and the list of
+	active sessions for this user are already shown.
+      </para>
+    </section>
+
+    <section>
+      <title>User Group Management</title>
+      <para>
+	This page provides a list of User Group with their name, their
+	description and their status and corresponding action (Enable or Block).  Also can you
+	add and remove User Groups.
+      </para>
+
+      <para>
+	The Manage page of a specific group lets you change status and
+	description for that group.  It's also possible to add or remove users from a
+	specific group and view the list of publications for a
+	specific group.
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Application Management</title>
+    <para>
+      This page provides the list of applications that are (physically)
+      installed on the Application Servers.
+    </para>
+    <para>
+      Each application is shown with its name, description and 
+      type (Linux or Windows).
+    </para>
+
+    <screenshot>
+      <screeninfo>Applications page</screeninfo>
+      <graphic fileref="img/admin-console/applications.png"></graphic>
+    </screenshot>
+
+    <para>
+      You can view more information about an application either by
+      clicking the <emphasis>Manage</emphasis> button or by clicking
+      on application name hyperlink.
+    </para>
+
+    <section>
+      <title>Manage an Application</title>
+      <para>
+	In this section, managing applications means that you can either install/uninstall this
+	application on online servers, or add/remove them from Application Groups.
+      </para>
+    </section>
+
+    <section>
+      <title>Application Group Management</title>
+      <para>
+	This page provides a list of Application Groups with their
+	name, description and status and a corresponding action (Enable or Block).
+	You can also add and remove an Application Group.
+      </para>
+
+      <para>
+	The manage page of a specific group lets you change their status
+	and description.  It's also possible to add or remove
+	users from a specific group and view the list of publications
+	for a specific group.
+      </para>
+    </section>
+
+    <section>
+      <title>Static Applications</title>
+      <para>
+        Static applications are applications that have not been detected
+	automatically on an Application Server.
+        The application is defined directly on the console. For instance, it could 
+        be a "Web Application".
+      </para>
+    </section>
+
+
+    <section>
+      <title>Publications</title>
+      <para>
+	This page shows associations between User Groups and
+	Application Groups. A publication wizard is available to make
+	the process more simple.
+      </para>
+      <para>
+	The publication wizard consists of 3 main steps:
+	<itemizedlist>
+	  <listitem>
+	    <para>selection of users</para>
+	  </listitem>
+	  <listitem>
+	    <para>selection of applications</para>
+	  </listitem>
+	  <listitem>
+	    <para>confirmations</para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      <para>
+	If you choose Users from the user list instead of an existing
+	User Group, the system will ask you for a User Group
+	name and description. The same process applies to selecting applications.
+      </para>
+    </section>
+  </section>
+
+
+  <section>
+    <title>Configuration</title>
+    <para>
+      On this page, you can configure the Session Manager.
+    </para>
+    <para>
+      Be careful when you change the settings: on some actions it can break active
+      sessions.
+    </para>
+
+    <screenshot>
+      <screeninfo>Configuration page</screeninfo>
+      <graphic fileref="img/admin-console/configuration.png"></graphic>
+    </screenshot>
+
+    <section>
+      <title>Database settings page</title>
+      <para>
+        On this page, it is possible to change settings for the
+	MySQL database used by OVD.
+      </para>
+      <important>
+        <para>
+          Be careful if you change the settings on this page: on some actions you can break your
+          system, delete your users groups or other important settings.
+        </para>
+      </important>
+    </section>
+
+    <section>
+      <title>System settings page</title>
+      <para>
+        On this page, it is possible to customize the language used for the
+        console. It is also possible to change the admin policy for OVD users.
+      </para>
+
+      <section>
+        <title>Policy</title>
+        <para>
+          By modifying the policy, you can authorize each of your OVD
+          users to perform some admin actions. The default policy can 
+          be overridden by customizing the policy for a specific User Group.
+        </para>
+        <para>
+          For instance, if you select <emphasis>user admin
+          panel</emphasis>, you allow each OVD user to log into
+          the Administration Console.
+        </para>
+
+        <note>
+          <para>
+            We advise to leave all fields of the default policy "disabled".
+          </para>
+          </note>
+      </section>
+    </section>
+
+    <section>
+      <title>Server settings page</title>
+      <para>
+        This page is for the Application Server settings
+      </para>
+
+      <simplesect>
+        <title>Load balancing</title>
+        <para>
+          The load balancing feature is used to choose which server will be selected when
+          a user is requesting a new session. It's possible to customize the
+          algorithm to change the criteria.
+        </para>
+      </simplesect>
+    </section>
+
+    <section>
+      <title>Profile settings page</title>
+      <para>
+        The Ulteo OVD can be plugged into LDAP or Active Directory, or use
+        its own local database.
+      </para>
+    </section>
+
+
+    <section>
+      <title>Session Configuration</title>
+      <para>
+        This section defines the default configuration for sessions
+        and also configures what the user can override.
+      </para>
+    </section>
+
+    <section>
+      <title>Events Configuration</title>
+      <para>
+        In this page, you can provide an email adress to receive an alert when
+        an event occurs.
+      </para>
+    </section>
+
+    <section>
+      <title>Web interface settings page</title>
+      <para>
+        This page is about the configuration of the Ulteo OVD main
+        page (the one the user uses to start a session).
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Status Category</title>
+
+    <screenshot>
+      <screeninfo>Status page</screeninfo>
+      <graphic fileref="img/admin-console/status.png"></graphic>
+    </screenshot>
+
+    <section>
+      <title>Session page</title>
+      <para>
+	This page shows a list of active sessions with the following information:
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">Session:</emphasis> the session id</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">Server:</emphasis> the server where the session is running</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">User:</emphasis> the user who started the session</para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+
+      <para>
+	A session can be terminated by clicking the <emphasis>Kill</emphasis> button.
+      </para>
+
+      <para>
+	You can view more information about a session by clicking on the corresponding session id.
+      </para>
+
+      <section>
+	<title>Manage a session</title>
+	<para>
+	  On the general page, there are two additional features:
+	  <itemizedlist>
+	    <listitem>
+	      <para>The date when the session started</para>
+	    </listitem>
+	    <listitem>
+	      <para>A button to join the session using the desktop sharing system</para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+      </section>
+  </section>
+
+
+  <section>
+    <title>Logs page</title>
+    <para>
+      This page shows the log on the Session Manager. The log level
+      depends on the configuration set in the Configuration System
+      settings page.
+    </para>
+  </section>
+
+  <section>
+    <title>Reporting page</title>
+    <para>
+      This page give you a report of your OVD infrastructure for the time
+      interval selected.
+    </para>
+  </section>
+
+  <section>
+    <title>Summary page</title>
+    <para>
+      Ths summary page shows all links between Users, User Groups,
+      Applications, Application Groups and Servers.
+    </para>
+    <para>
+      This page is very useful for checking the publication configuration
+      or for problem determination whan a session cannot be started.
+    </para>
+    <important>
+      <para>
+        This page can take time to load if you have many users in your
+        database. Use it carefully.
+      </para>
+    </important>
+  </section>
+  </section>
+  <xi:include href="colophon.xml" />
+</article>

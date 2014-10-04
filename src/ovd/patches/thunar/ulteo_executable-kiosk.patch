@@ -1,0 +1,190 @@
+--- thunar-0.9.0/thunar-vfs/thunar-vfs-info.c	2007-12-02 14:46:33.000000000 +0100
++++ thunar-0.9.0_new/thunar-vfs/thunar-vfs-info.c	2010-06-29 09:47:32.000000000 +0200
+@@ -32,6 +32,8 @@
+ #include <unistd.h>
+ #endif
+ 
++#define KIOSK_RESTRICT_CONFIG_FILE  "/etc/xdg/xfce4/kiosk/kiosk_restriction.conf"
++
+ /* implement thunar-vfs-info's inline functions */
+ #define G_IMPLEMENT_INLINES 1
+ #define __THUNAR_VFS_INFO_C__
+@@ -302,6 +304,36 @@
+     }
+ }
+ 
++gboolean
++thunar_vfs_application_is_authorized (const gchar *exec, const gchar *launcher, GError **error)
++{
++  gchar         **exec_params;
++  gchar         **launcher_params;
++  gboolean       result = FALSE;
++  gint          i;
++  gint          j;
++
++  exec_params = g_strsplit(exec, " ", -1);
++  launcher_params = g_strsplit(launcher, ";", -1);
++
++  for (i = 0 ; exec_params[i] != NULL ; ++i)
++    {
++      if (G_LIKELY (*exec_params[i] != '\0'))
++        {
++          for (j = 0 ; launcher_params[j] != NULL ; ++j)
++            {
++              if (G_LIKELY (strcmp (launcher_params[j], exec_params[i]) == 0))
++                {
++                  result = TRUE;
++                }
++            }
++          break;
++        }
++    }
++  g_strfreev (launcher_params);
++  g_strfreev (exec_params);
++  return result;
++}
+ 
+ 
+ /**
+@@ -339,12 +371,17 @@
+   gboolean       startup_notify = FALSE;
+   gboolean       terminal;
+   gboolean       result = FALSE;
++  gboolean       kiosk_authorize = FALSE;
+   XfceRc        *rc;
++  XfceRc        *kiosk_rc;
+   gchar         *absolute_path;
+   gchar         *path_escaped;
+   gchar         *directory;
+   gchar        **argv = NULL;
+   gchar         *exec;
++  gchar         *launcher;
++  gchar         *clean_launcher;
++
+ 
+   g_return_val_if_fail (info != NULL, FALSE);
+   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+@@ -360,6 +397,14 @@
+   if (G_UNLIKELY (absolute_path == NULL))
+     return FALSE;
+ 
++  /* load kiosk configuration file */
++  kiosk_rc = xfce_rc_simple_open (KIOSK_RESTRICT_CONFIG_FILE, TRUE);
++  if (G_LIKELY (kiosk_rc == NULL))
++    {
++      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to open kiosk restriction configuration file"));
++      g_free (absolute_path);
++      return FALSE;
++    }
+   /* check if we have a .desktop (and NOT a .directory) file here */
+   if (G_UNLIKELY (info->mime_info == _thunar_vfs_mime_application_x_desktop && strcmp (thunar_vfs_path_get_name (info->path), ".directory") != 0))
+     {
+@@ -373,40 +418,53 @@
+           type = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
+           if (G_LIKELY (exo_str_is_equal (type, "Application")))
+             {
+-              /* check if we have a valid Exec field */
+-              exec = (gchar *) xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
+-              if (G_LIKELY (exec != NULL))
++              xfce_rc_set_group (kiosk_rc, "Application");
++              kiosk_authorize = xfce_rc_read_bool_entry (kiosk_rc, "Authorized", FALSE);
++              launcher = xfce_rc_read_entry_untranslated (kiosk_rc, "Authorized_launcher", NULL);
++              clean_launcher = exo_str_replace (launcher, "\"", "");
++              if (G_LIKELY (kiosk_authorize == TRUE))
+                 {
+-                  /* parse the Exec field */
+-                  name = xfce_rc_read_entry (rc, "Name", NULL);
+-                  icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
+-                  terminal = xfce_rc_read_bool_entry (rc, "Terminal", FALSE);
+-                  startup_notify = xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE);
+-                  result = thunar_vfs_exec_parse (exec, path_list, icon, name, absolute_path, terminal, NULL, &argv, error);
+-                }
+-              else
+-                {
+-                  /* TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is. */
+-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
+-                }
++                  /* check if we have a valid Exec field */
++                  exec = (gchar *) xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
++                  if (G_LIKELY (exec != NULL && thunar_vfs_application_is_authorized(exec, clean_launcher, error) == TRUE))
++                    {
++                      /* parse the Exec field */
++                      name = xfce_rc_read_entry (rc, "Name", NULL);
++                      icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
++                      terminal = xfce_rc_read_bool_entry (rc, "Terminal", FALSE);
++                      startup_notify = xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE);
++                      result = thunar_vfs_exec_parse (exec, path_list, icon, name, absolute_path, terminal, NULL, &argv, error);
++                    }
++                  else
++                    {
++                      /* TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is. */
++                      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
++                    }
++          	}
++              g_free (clean_launcher);
+             }
+           else if (exo_str_is_equal (type, "Link"))
+             {
++              xfce_rc_set_group (kiosk_rc, "Link");
++              kiosk_authorize = xfce_rc_read_bool_entry (kiosk_rc, "Authorized", FALSE);
+               /* check if we have a valid URL field */
+-              url = xfce_rc_read_entry_untranslated (rc, "URL", NULL);
+-              if (G_LIKELY (url != NULL))
++              if (G_LIKELY (kiosk_authorize == TRUE))
+                 {
+-                  /* pass the URL to exo-open, which will fire up the appropriate viewer */
+-                  argv = g_new (gchar *, 3);
+-                  argv[0] = g_strdup ("exo-open");
+-                  argv[1] = g_strdup (url);
+-                  argv[2] = NULL;
+-                  result = TRUE;
+-                }
+-              else
+-                {
+-                  /* TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is. */
+-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No URL field specified"));
++                  url = xfce_rc_read_entry_untranslated (rc, "URL", NULL);
++                  if (G_LIKELY (url != NULL))
++                    {
++                      /* pass the URL to exo-open, which will fire up the appropriate viewer */
++                      argv = g_new (gchar *, 3);
++                      argv[0] = g_strdup ("exo-open");
++                      argv[1] = g_strdup (url);
++                      argv[2] = NULL;
++                      result = TRUE;
++                    }
++                  else
++                    {
++                      /* TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is. */
++                      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No URL field specified"));
++                    }
+                 }
+             }
+           else
+@@ -422,15 +480,17 @@
+           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to parse file"));
+         }
+     }
+-  else
+-    {
+-      /* fake the Exec line */
+-      path_escaped = g_shell_quote (absolute_path);
+-      exec = g_strconcat (path_escaped, " %F", NULL);
+-      result = thunar_vfs_exec_parse (exec, path_list, NULL, NULL, NULL, FALSE, NULL, &argv, error);
+-      g_free (path_escaped);
+-      g_free (exec);
+-    }
++  xfce_rc_close (kiosk_rc);
++  /* we disallow others file execution */
++//  else
++//    {
++//      /* fake the Exec line */
++//      path_escaped = g_shell_quote (absolute_path);
++//      exec = g_strconcat (path_escaped, " %F", NULL);
++//      result = thunar_vfs_exec_parse (exec, path_list, NULL, NULL, NULL, FALSE, NULL, &argv, error);
++//      g_free (path_escaped);
++//      g_free (exec);
++//    }
+ 
+   if (G_LIKELY (result))
+     {

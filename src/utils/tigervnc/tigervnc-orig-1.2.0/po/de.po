@@ -1,0 +1,342 @@
+# Copyright (C) 2011 TigerVNC Team
+msgid ""
+msgstr ""
+"Project-Id-Version: TigerVNC 0.0.91\n"
+"Report-Msgid-Bugs-To: tigervnc-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-08-29 15:49+0200\n"
+"PO-Revision-Date: 2005-03-01 20:41+0100\n"
+"Last-Translator: Klaus Franken <Klaus.Franken@StrukturPunkt.de>\n"
+"Language-Team: German\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, fuzzy
+msgid "About"
+msgstr "Über..."
+
+msgid "About TigerVNC Viewer"
+msgstr "Über VNC-Viewer"
+
+msgid "About TigerVNC viewer..."
+msgstr "Über TigerVNC-Viewer"
+
+msgid "About..."
+msgstr "Über..."
+
+msgid "Accept clipboard from server"
+msgstr "Akzeptiere Zwischenablage vom Server"
+
+msgid "Allow JPEG compression:"
+msgstr "Erlaube JPEG-Kompression:"
+
+msgid "Alt"
+msgstr "Alt"
+
+#, fuzzy
+msgid "Authentication"
+msgstr "Authentifizierung:"
+
+#, fuzzy
+msgid "Authentication cancelled"
+msgstr "Authentifizierung:"
+
+msgid "Auto select"
+msgstr "automatische Auswahl"
+
+msgid "Cancel"
+msgstr "Abbruch"
+
+msgid "Close"
+msgstr ""
+
+msgid "Color level"
+msgstr ""
+
+#, fuzzy
+msgid "Compression"
+msgstr "individueller Kompressionslevel:"
+
+msgid "Connection info..."
+msgstr "Verbindungsinformationen..."
+
+#, c-format
+msgid "Could not create VNC home directory: %s."
+msgstr ""
+
+msgid "Could not create VNC home directory: can't obtain home directory path."
+msgstr ""
+
+msgid "Ctrl"
+msgstr "Strg"
+
+msgid "Custom compression level:"
+msgstr "individueller Kompressionslevel:"
+
+#, c-format
+msgid ""
+"Desktop name: %.80s\n"
+"Host: %.80s port: %d\n"
+"Size: %d x %d\n"
+"Pixel format: %s\n"
+"(server default %s)\n"
+"Requested encoding: %s\n"
+"Last used encoding: %s\n"
+"Line speed estimate: %d kbit/s\n"
+"Protocol version: %d.%d\n"
+"Security method: %s\n"
+msgstr ""
+"Desktopname: %.80s\n"
+"Host: %.80s port: %d\n"
+"Größe: %d x %d\n"
+"Pixelformat: %s\n"
+"(Server Standard %s)\n"
+"gewünschte Kodierung: %s\n"
+"letzte benutzte Kodierung: %s\n"
+"Leitungsgeschwindigkeit (geschätzt): %d kbit/s\n"
+"Protokollversion: %d.%d\n"
+"Sicherheitsmethode: %s\n"
+
+msgid "Dismiss menu"
+msgstr "Menü verlassen"
+
+#, fuzzy
+msgid "Encryption"
+msgstr "Sitzungs-VerschlÃŒsselung:"
+
+msgid "Exit viewer"
+msgstr "Viewer beenden"
+
+msgid "Extended encryption and authentication methods (VeNCrypt)"
+msgstr ""
+"Erweiterte VerschlÃŒsselungs- und Authentifizierungsmethoden (VeNCrypt)"
+
+msgid "Failure grabbing keyboard"
+msgstr ""
+
+msgid "Full (all available colors)"
+msgstr "Voll (alle verfügbaren Farben)"
+
+msgid "Full screen"
+msgstr "Vollbild"
+
+msgid "Full-screen mode"
+msgstr "Vollbild-Modus"
+
+msgid "Hide"
+msgstr ""
+
+msgid "Hide Others"
+msgstr ""
+
+#, fuzzy
+msgid "Input"
+msgstr "Eingaben:"
+
+msgid "Internal FLTK error. Exiting."
+msgstr ""
+
+msgid "Low (64 colors)"
+msgstr "Gering (64 Farben)"
+
+msgid "Medium (256 colors)"
+msgstr "Mittel (256 Farben)"
+
+msgid "Menu key"
+msgstr ""
+
+#, fuzzy
+msgid "Misc."
+msgstr "Diverses:"
+
+#, c-format
+msgid "Multiple characters given for key code %d (0x%04x): '%s'"
+msgstr ""
+
+#, fuzzy
+msgid "No"
+msgstr "Keine"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "OK"
+msgstr "Ok"
+
+msgid "Opening password file failed"
+msgstr ""
+
+msgid "Options..."
+msgstr "Optionen..."
+
+msgid "Pass system keys directly to server (full screen)"
+msgstr ""
+
+msgid "Password:"
+msgstr "Passwort:"
+
+msgid "Path to X509 CA certificate"
+msgstr "Pfad zum X509 CA Zertifikat"
+
+msgid "Path to X509 CRL file"
+msgstr "Pfad zur X509 CRL Datei"
+
+msgid "Preferred encoding"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "Refresh screen"
+msgstr "Bildschirm auffrischen"
+
+#, fuzzy
+msgid "Security"
+msgstr "Sicherheiteinstellungen:"
+
+#, c-format
+msgid "Send %s"
+msgstr "Sende %s"
+
+msgid "Send Ctrl-Alt-Del"
+msgstr "Sende Strg-Alt-Del"
+
+msgid "Send clipboard to server"
+msgstr "Sende Zwischenablage zum Server"
+
+#, fuzzy
+msgid "Send primary selection and cut buffer as clipboard"
+msgstr "Sende primary selection & cut buffer als Zwischenablage"
+
+msgid "Services"
+msgstr ""
+
+#, c-format
+msgid "SetDesktopSize failed: %d"
+msgstr ""
+
+msgid "Shared (don't disconnect other viewers)"
+msgstr "Gemeinsamer Zugriff (andere VNC-Viewer nicht trennen)"
+
+msgid "Show All"
+msgstr ""
+
+msgid "Show dot when no cursor"
+msgstr "Zeige Punkt wenn kein Cursor"
+
+msgid "Standard VNC (insecure without encryption)"
+msgstr "Standard VNC (unsicher ohne VerschlÃŒsserlung)"
+
+msgid "TLS with X509 certificates"
+msgstr "TLS mit X509 Zertifikaten"
+
+msgid "TLS with anonymous certificates"
+msgstr "TLS mit anonymen Zertifikaten"
+
+#, c-format
+msgid "Throughput %d kbit/s - changing to quality %d"
+msgstr ""
+
+#, c-format
+msgid "Throughput %d kbit/s - full color is now %s"
+msgstr ""
+
+#, fuzzy
+msgid "TigerVNC Viewer"
+msgstr "Über VNC-Viewer"
+
+#, fuzzy, c-format
+msgid ""
+"TigerVNC Viewer %d-bit v%s (%s)\n"
+"%s\n"
+"Copyright (C) 1999-2011 TigerVNC Team and many others (see README.txt)\n"
+"See http://www.tigervnc.org for information on TigerVNC."
+msgstr ""
+"TigerVNC-Viewer version %s (%s)\n"
+"%s\n"
+"Copyright (C) 1999-2011 TigerVNC Team and many others (see README.txt)\n"
+"Copyright (C) 2005 Klaus Franken, StrukturPunkt\n"
+"Siehe http://www.tigervnc.org für Informationen über TigerVNC."
+
+#, c-format
+msgid "TigerVNC: %.240s"
+msgstr "TigerVNC: %.240s"
+
+#, c-format
+msgid "Unexpected release of FLTK key code %d (0x%04x)"
+msgstr ""
+
+#, c-format
+msgid "Unknown FLTK key code %d (0x%04x)"
+msgstr ""
+
+msgid "Username and password (insecure without encryption)"
+msgstr "Benutzername und Passwort (unsicher ohne VerschlÃŒsselung)"
+
+msgid "Username:"
+msgstr "Benutzername:"
+
+#, c-format
+msgid "Using %s encoding"
+msgstr ""
+
+#, c-format
+msgid "Using pixel format %s"
+msgstr ""
+
+msgid "VNC Viewer: Connection Details"
+msgstr "VNC-Viewer: Verbindungsdetails"
+
+msgid "VNC Viewer: Connection Options"
+msgstr "VNC-Viewer: Verbindungsoptionen"
+
+msgid "VNC authentication"
+msgstr "VNC Authentifizierung"
+
+msgid "VNC connection info"
+msgstr "VNC Verbindungsinformation"
+
+msgid "VNC server:"
+msgstr "VNC-Server:"
+
+msgid "Very low (8 colors)"
+msgstr "Sehr gering (8 Farben)"
+
+#, fuzzy
+msgid "View only (ignore mouse and keyboard)"
+msgstr "nur Ansicht (ignoriere Maus und Tastatur)"
+
+msgid "Yes"
+msgstr ""
+
+#, c-format
+msgid "connected to host %s port %d"
+msgstr ""
+
+msgid "disabled"
+msgstr ""
+
+msgid "enabled"
+msgstr ""
+
+#, fuzzy
+msgid "level (1=fast, 6=best [4-6 are rarely useful])"
+msgstr "Level (1=schnell, 9=bester)"
+
+#, fuzzy
+msgid "quality (0=poor, 9=best)"
+msgstr "Qualität (0=schlechte, 9=beste)"
+
+#~ msgid "Encoding and Color Level:"
+#~ msgstr "Kodierung und Farbtiefe:"
+
+#~ msgid "New connection..."
+#~ msgstr "Neue Verbindung..."
+
+#~ msgid "Render cursor locally"
+#~ msgstr "Zeige Cursor lokal"
+
+#~ msgid "VNC Menu"
+#~ msgstr "VNC-Menü"

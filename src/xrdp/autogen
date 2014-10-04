@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Copyright (C) 2010-2013 Ulteo SAS
+# http://www.ulteo.com
+# Author Samuel BOVEE <samuel@ulteo.com> 2010-2011
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2013
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# check needed tools
+tools="aclocal libtoolize autoheader autoconf automake libtool"
+for tool in $tools; do
+  which $tool > /dev/null || (echo "error, install $tool" && exit 1)
+done
+
+# get version
+if [ -n "$OVD_VERSION" ]; then
+    version="$OVD_VERSION"
+else
+    version=$(cat VERSION | head -n 1)~dev
+fi
+
+if [ -f premium/Makefile.am ]; then
+ premium_mk="premium/Makefile"
+else
+ premium_mk=""
+fi
+
+sed -e "s/@VERSION@/${version}/g" \
+    -e "s,@PREMIUM_MK@,${premium_mk},g" \
+    configure.ac.in > configure.ac
+sed -e "s/@VERSION@/${version}/g" < setup.py.in > setup.py
+
+autoreconf -fvi && ./configure $@

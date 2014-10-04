@@ -1,0 +1,4 @@
+debian/tmp/etc/cups/xrdp_printer.conf
+debian/tmp/usr/lib/cups/backend/xrdpprinter
+debian/tmp/usr/share/cups/model/PostscriptColor.ppd.gz
+debian/tmp/usr/sbin/xrdp-printerd

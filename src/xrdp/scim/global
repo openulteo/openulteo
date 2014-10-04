@@ -1,0 +1,3 @@
+# from /etc/xrdp/scim/global
+/SupportedUnicodeLocales = en_US.UTF-8
+/DisabledIMEngineFactories = c6bebc27-6324-4b77-8ad4-6d41dcaf2e08,6e029d75-ef65-42a8-848e-332e63d70f9c

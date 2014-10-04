@@ -1,0 +1,13 @@
+<garden>
+  <plant value='base'>
+    <debootstrap value="1" />
+    <name value="base" />
+    <make value="tgz" arch="all" />
+    <seed value="desktop" />
+    <debconf value="flashplugin-nonfree" template="flashplugin-nonfree/httpget" type="boolean" default="true" />
+    <debconf value="skype" template="shared/accepted-skype-eula" type="boolean" default="true" />
+    <debconf value="dictionaries-common/default-ispell" template="dictionaries-common/default-ispell" type="string" default="Manual symlinks setting" />
+    <debconf value="dictionaries-common/default-wordlist" template="dictionaries-common/default-wordlist" type="string" default="american (American English)" />
+    <debconf value="ttf-mscorefonts-installer" template="msttcorefonts/accepted-mscorefonts-eula" type="boolean" default="true" />
+  </plant>
+</garden>

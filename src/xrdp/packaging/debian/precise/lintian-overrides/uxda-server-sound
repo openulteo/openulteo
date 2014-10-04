@@ -1,0 +1,2 @@
+uxda-server-sound: debian-changelog-file-is-a-symlink
+uxda-server-sound: unusual-interpreter ./etc/xrdp/rdpsnd.pa #!/usr/bin/pulseaudio

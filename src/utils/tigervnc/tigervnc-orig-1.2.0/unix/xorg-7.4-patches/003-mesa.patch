@@ -1,0 +1,12 @@
+--- a/../Mesa-7.2/src/mesa/x86-64/glapi_x86-64.S
++++ b/../Mesa-7.2/src/mesa/x86-64/glapi_x86-64.S
+@@ -73,7 +73,8 @@
+ 
+ 	.p2align	4,,15
+ _x86_64_get_dispatch:
+-	movq	_gl_DispatchTSD(%rip), %rdi
++	movq	_gl_DispatchTSD@GOTPCREL(%rip), %rax
++	movl	(%rax), %edi
+ 	jmp	pthread_getspecific@PLT
+ 
+ #elif defined(THREADS)

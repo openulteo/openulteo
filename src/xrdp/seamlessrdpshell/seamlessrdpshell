@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#process tag
+export XRDP_PROCESS=1
+
+xsetroot -solid white
+xfwm4&
+WM_PID=$!
+sleep 1
+XHook&
+wait $WM_PID
+
+
+

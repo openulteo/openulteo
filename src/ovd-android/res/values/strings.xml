@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="Login">Login</string>
+	<string name="Password">Password</string>
+	<string name="SessionM">Session Manager</string>
+	<string name="Help">Help</string>
+	<string name="ulteo_website">Ulteo website</string>
+	<string name="Start">Start!</string>
+	<string name="Help_maingestures">Main gestures</string>
+	<string name="Help_viewgestures">View gestures</string>
+	<string name="active_session">You already have an active session</string>
+	<string name="auth_failed">Authentication failed: please double-check your password and try again</string>
+	<string name="invalid_user">You specified an invalid login, please double-check and try again</string>
+	<string name="bad_session_mode">You are not authorized to launch a session in this mode</string>
+	<string name="service_not_avail">The service is not available, please contact your administrator for more information</string>
+	<string name="maintenance_mode">The system is on maintenance mode, please contact your administrator for more information</string>
+	<string name="internal_error">An internal error occurred, please contact your administrator</string>
+	<string name="default_error">An error occurred, please contact your administrator</string>
+	<string name="conn_refused">Unable to reach the Session Manager</string>
+	<string name="close_session">You have been disconnected</string>
+	<string name="connection_lost">Network is down</string>
+	<string name="wait_reco">The networks connection appears to be down, You can wait for reconnection or logout</string>
+	<string name="error_connection">Connection error</string>
+	<string name="error_internet">No Internet connection has been detected on this
+		device. Please enable Wifi/3G before using this application</string>
+	<string name="error_miss_login">You must specify a username!</string>
+	<string name="error_miss_passwd">You must specify a password!</string>
+	<string name="error_ipaddr">Invalid host field!</string>
+	<string name="gest_1click">Click</string>
+	<string name="gest_1longclick">Right click</string>
+	<string name="gest_2click">Show keyboard</string>
+	<string name="gest_3click">Show toolbar</string>
+	<string name="gest_zoom">Zoom</string>
+	<string name="gest_2move">Move view</string>
+	<string name="leave_session">Do you want to disconnect the current session ?</string>
+	<string name="waiting_server_for_session">Waiting server for session</string>
+	<string name="loading_open_virtual_desktop">Loading Open Virtual Desktop</string>
+	<string name="logout">Logout</string>
+	<string name="hide_sm">Hide the Session Manager in login screen</string>
+	<string name="show_sm">The login screen shows the Session Manager data</string>
+	<string name="hide_sm_title">Hide session manager in login screen</string>
+	<string name="sm_summary">Set the session manager url</string>
+	<string name="save_password_on">The password will be saved</string>
+	<string name="save_password_off">The password will not be saved</string>
+	<string name="save_password_title">Save the password</string>
+	<string name="category_session">Session</string>
+	<string name="resolution_title">Session resolution</string>
+	<string name="resolution_summary">Set the screen dimensions of the session</string>
+	<string name="sm_title">Session manager Url</string>
+	<string name="suspend">Suspend</string>
+	<string name="toggle_keyboard">Toggle keyboard</string>
+	<string name="hide_system_ui_title">Dim system bar</string>
+	<string name="hide_system_ui_on">Dim the system bar with clock while showing the desktop</string>
+	<string name="hide_system_ui_off">Always show the system bar with clock</string>
+	<string name="category_rdp">Advanced options</string>
+	<string name="bulk_compression_title">RDP Compression</string>
+	<string name="bulk_compression_on">Enable RDP compression</string>
+	<string name="bulk_compression_off">Disable RDP compression</string>
+	<string name="desktop_session_active">Active desktop session</string>
+	<string name="fullscreen">Fullscreen</string>
+	<string name="fullscreen_on">The desktop will take all screen space</string>
+	<string name="fullscreen_off">Android controls remains visible on screen</string>
+	<string name="create_shortcut">Create shortcut</string>
+	<string name="ime">Enhanced keyboard</string>
+	<string name="ime_on">Use enhanced keyboard</string>
+	<string name="ime_off">Do not use enhanced keyboard</string>
+	<string name="resolution_auto_off">Automatic detection of screen resolution</string>
+	<string name="resolution_auto_on">Manual selection of screen resolution</string>
+	<string name="resolution_auto_title">Manual resolution</string>
+	<string name="resolution_wide_title">Force wide screen</string>
+	<string name="resolution_wide_on">Wide screen resolution will be forced</string>
+	<string name="resolution_wide_off">Screen resolution not changed</string>
+	<string name="connexion_type">Connection type</string>
+	<string-array name="conn_types">
+		<item>Not specified</item>
+		<item>Modem (56 Kbits/s)</item>
+		<item>Broadband Low (256 Kbits/s)</item>
+		<item>Satellite (2 Mbits/s)</item>
+		<item>Broadband High (10 Mbits/s)</item>
+		<item>WAN (10 Mbits/s)</item>
+		<item>LAN (100 Mbits/s)</item>
+	</string-array>
+</resources>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="settings" >
+
+    <PreferenceCategory
+        android:key="sm_category"
+        android:title="@string/SessionM" >
+        <CheckBoxPreference
+            android:key="hide_session_manager"
+            android:summaryOff="@string/show_sm"
+            android:summaryOn="@string/hide_sm"
+            android:title="@string/hide_sm_title" />
+
+        <EditTextPreference
+            android:dependency="hide_session_manager"
+            android:dialogMessage="@string/sm_summary"
+            android:dialogTitle="@string/sm_title"
+            android:key="ip"
+            android:shouldDisableView="true"
+            android:title="@string/sm_title" />
+
+        <CheckBoxPreference
+            android:key="save_password"
+            android:summaryOff="@string/save_password_off"
+            android:summaryOn="@string/save_password_on"
+            android:title="@string/save_password_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_session"
+        android:title="@string/category_session" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="fullscreen"
+            android:summaryOff="@string/fullscreen_off"
+            android:summaryOn="@string/fullscreen_on"
+            android:title="@string/fullscreen" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="resolution_auto"
+            android:summaryOff="@string/resolution_auto_off"
+            android:summaryOn="@string/resolution_auto_on"
+            android:title="@string/resolution_auto_title" />
+
+        <ListPreference
+            android:defaultValue="854x480"
+            android:dependency="resolution_auto"
+            android:dialogTitle="@string/resolution_summary"
+            android:entries="@array/screen_res"
+            android:entryValues="@array/screen_res"
+            android:key="resolution"
+            android:title="@string/resolution_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="resolution_wide"
+            android:summaryOff="@string/resolution_wide_off"
+            android:summaryOn="@string/resolution_wide_on"
+            android:title="@string/resolution_wide_title" />
+        <CheckBoxPreference
+            android:key="hide_system_ui"
+            android:shouldDisableView="true"
+            android:summaryOff="@string/hide_system_ui_off"
+            android:summaryOn="@string/hide_system_ui_on"
+            android:title="@string/hide_system_ui_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="ime"
+            android:summaryOff="@string/ime_off"
+            android:summaryOn="@string/ime_on"
+            android:title="@string/ime" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_rdp"
+        android:title="@string/category_rdp" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="bulk_compression"
+            android:shouldDisableView="true"
+            android:summaryOff="@string/bulk_compression_off"
+            android:summaryOn="@string/bulk_compression_on"
+            android:title="@string/bulk_compression_title" />
+
+        <ListPreference
+            android:defaultValue="0"
+            android:dialogTitle="@string/connexion_type"
+            android:entries="@array/conn_types"
+            android:entryValues="@array/conn_type_values"
+            android:key="connexion_type"
+            android:title="@string/connexion_type" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

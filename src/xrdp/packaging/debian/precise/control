@@ -1,0 +1,114 @@
+Source: uxda-server
+Section: x11
+Priority: extra
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: debhelper (>= 6), cdbs, quilt,
+ python (>= 2.6), python-central,
+ libxml2-dev, libx11-dev, libxfixes-dev, libssl-dev, libpam0g-dev,
+ libpulse-dev, libcups2-dev, libltdl-dev, libfuse-dev, libjpeg-turbo8-dev,
+ libmagickwand-dev, libscim-dev, libcurl-dev
+Standards-Version: 3.8.3
+XS-Python-Version: >= 2.5
+
+Package: uxda-server
+Architecture: any
+Depends: ${shlibs:Depends}, ${python:Depends}, ulteo-ovd-vnc-server, uxda-server-scim
+Recommends: xfonts-base, xfonts-encodings
+Conflicts: xrdp
+Description: RDP server for Linux
+ UXDA Server is a RDP server for Linux. It provides remote display of a desktop and
+ many other features such as:
+  * seamless display
+  * printer and local device mapping
+
+Package: uxda-server-seamrdp
+Architecture: any
+Depends: ${shlibs:Depends}, uxda-server, xfwm4
+Description: Seamless UXDA Shell
+ Seamlessrdpshell is a rdp addon offering the possibility to have an
+ application without a desktop.
+
+Package: uxda-server-rdpdr
+Architecture: any
+Depends: ${shlibs:Depends}, uxda-server, fuse-utils
+Description: UXDA disks redirection
+ UXDA channel that handle disks redirection.
+
+Package: uxda-server-clipboard
+Architecture: any
+Depends: ${shlibs:Depends}, uxda-server
+Description: UXDA clipboard
+ UXDA channel providing copy/past text functionnality.
+
+Package: uxda-server-sound
+Architecture: any
+Depends: ${shlibs:Depends}, uxda-server, pulseaudio,
+ alsa-base, alsa-utils, libasound2-plugins
+Description: UXDA plugin for PulseAudio
+ This package contains the UXDA plugin for PulseAudio, a sound server for POSIX
+ and WIN32 systems.
+
+Package: uxda-server-printer
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}, uxda-server-rdpdr, ghostscript, cups
+Description: cups file converter to ps format
+ UXDA Printer converts a ps file from cups in ps
+
+Package: uxda-server-python
+Section: python
+Architecture: all
+Depends: ${python:Depends}, uxda-server
+XB-Python-Version: ${python:Versions}
+Description: Python API for UXDA
+ UXDA-Python is a Python wrapper for UXDA
+
+Package: uxda-server-scim
+Architecture: any
+Depends: ${shlibs:Depends}, scim
+Description: UXDA Unicode input method
+ UXDA-Scim provides unicode input support for UXDA using Scim
+
+################
+# DEBUG packages
+
+Package: uxda-server-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server (= ${binary:Version})
+Description: UXDA (debug symbols)
+
+Package: uxda-server-seamrdp-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-seamrdp (= ${binary:Version})
+Description: UXDA seamless (debug symbols)
+
+Package: uxda-server-rdpdr-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-rdpdr (= ${binary:Version})
+Description: UXDA disk redirection (debug symbols)
+
+Package: uxda-server-clipboard-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-clipboard (= ${binary:Version})
+Description: UXDA clipboard (debug symbols)
+
+Package: uxda-server-printer-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-printer (= ${binary:Version})
+Description: UXDA printer (debug symbols)
+
+Package: uxda-server-sound-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-sound (= ${binary:Version})
+Description: UXDA sound (debug symbols)
+
+Package: uxda-server-scim-dbg
+Section: debug
+Architecture: any
+Depends: uxda-server-scim (= ${binary:Version})
+Description: UXDA Unicode input method (debug symbols)

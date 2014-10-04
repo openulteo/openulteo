@@ -1,0 +1,4 @@
+debian/tmp/etc/asound.conf
+debian/tmp/etc/xrdp/rdpsnd.*
+debian/tmp/usr/sbin/vchannel_rdpsnd
+debian/lintian-overrides/uxda-server-sound /usr/share/lintian/overrides/

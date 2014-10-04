@@ -1,0 +1,19 @@
+
+Xrdp_printer : convert a ps file from cups in ps
+
+== For Packager ==
+
+mkdir cupsys:lp /var/spool/xrdp_printer
+mkdir cupsys:lp /var/spool/xrdp_printer/SPOOL
+
+xrdp_printer => /usr/lib/cups/backend/xrdpprinter
+extra/PostscriptColor.ppd.gz => /usr/share/cups/model/PostscriptColor.ppd.gz
+extra/xrdp_printer.conf => /etc/cups/xrdp_printer.conf
+
+=== Depends ===
+
+  * ghoscript : gs-esp 
+  * cupsys 
+  * python
+
+  * syslog

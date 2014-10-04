@@ -1,0 +1,24 @@
+#!/bin/bash
+export DISPLAY=$3
+
+WIDTH=$1
+HEIGHT=$2
+
+MODELINE=$(cvt -r ${WIDTH} ${HEIGHT} | grep Modeline | sed "s/Modeline//g"| sed "s/\"//g" | sed "s/x/ /g" | sed "s/R//g" |sed -e "s/\s\+/;/g")
+
+PARAM1=$(echo ${MODELINE} | cut -d";" -f4)
+PARAM2=$(echo ${MODELINE} | cut -d";" -f5)
+PARAM3=$(echo ${MODELINE} | cut -d";" -f6)
+PARAM4=$(echo ${MODELINE} | cut -d";" -f7)
+PARAM5=$(echo ${MODELINE} | cut -d";" -f8)
+PARAM6=$(echo ${MODELINE} | cut -d";" -f9)
+PARAM7=$(echo ${MODELINE} | cut -d";" -f10)
+PARAM8=$(echo ${MODELINE} | cut -d";" -f11)
+PARAM9=$(echo ${MODELINE} | cut -d";" -f12)
+PARAM10=$(echo ${MODELINE} | cut -d";" -f13)
+PARAM11=$(echo ${MODELINE} | cut -d";" -f14)
+
+# Add new resolution
+xrandr --newmode ${WIDTH}x${HEIGHT} ${PARAM1} ${WIDTH} ${PARAM3} ${PARAM4} ${PARAM5} ${PARAM6} ${PARAM7} ${PARAM8} ${PARAM9} ${PARAM10} ${PARAM11}
+xrandr --addmode default ${WIDTH}x${HEIGHT}
+xrandr -s ${WIDTH}x${HEIGHT}

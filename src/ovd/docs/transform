@@ -1,0 +1,147 @@
+#! /usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Copyright (C) 2011-2014 Ulteo SAS
+# http://www.ulteo.com
+# Author Julien LANGLOIS <julien@ulteo.com> 2011
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2013, 2014
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import getopt
+import os
+import sys
+import time
+from xml.dom import minidom
+import urlparse
+
+
+def perform_transform(content):
+	transform_vars = {"YEAR": time.strftime("%Y")}
+	
+	# Detect the version
+	if os.environ.has_key("OVD_VERSION"):
+		version = os.environ["OVD_VERSION"]
+	else:
+		version = file("VERSION", "r").readline().strip()
+#		version += "~dev"
+	transform_vars["VERSION"] = version
+	transform_vars["VERSIONNOTILD"] = version.replace("~", "-")
+	
+	if os.environ.has_key("BASE_URI"):
+		base_uri = os.environ["BASE_URI"]
+	else:
+		base_uri = "http://archive.ulteo.com/ovd/" + version
+	
+	if os.environ.has_key("GOLD_NAME"):
+		gold_name = os.environ["GOLD_NAME"]
+	else:
+		gold_name = "Premium"
+	
+	base_uri_gold = list(urlparse.urlsplit(base_uri + "/" + gold_name))
+	#base_uri_gold[1] = "LOGIN:PASSWORD@" + base_uri_gold[1]
+	base_uri_gold = urlparse.urlunsplit(base_uri_gold)
+		
+	# added for private beta 4
+	base_uri = list(urlparse.urlsplit(base_uri))
+	#base_uri[1] = "LOGIN:PASSWORD@" + base_uri[1]
+	base_uri = urlparse.urlunsplit(base_uri)
+		
+	transform_vars["BASE_URI"] = base_uri 
+	transform_vars["GOLD_NAME"] = gold_name
+	transform_vars["BASE_URI_GOLD"] = base_uri_gold
+	
+	try:
+		document = minidom.parseString(content)
+	except Exception, err:
+		print err
+		sys.exit(1)
+	
+	rootNode = document.documentElement
+	
+	for screen in rootNode.getElementsByTagName("screen"):
+		for node in screen.childNodes:
+			if isinstance(node, minidom.Text) and node.data.strip() == "":
+				screen.removeChild(node)
+	
+	nodes = rootNode.getElementsByTagName("transform_var")
+	for node in nodes:
+		if not node.hasAttribute("name") or not node.hasAttribute("value"):
+			print >> sys.stderr, "Invalid var"
+		else:
+			transform_vars[node.getAttribute("name")] = node.getAttribute("value")
+		
+		node.parentNode.removeChild(node)
+	
+	content = document.toxml()
+	
+	for (k, v) in transform_vars.items():
+		content = content.replace("@"+k+"@", v)
+	
+	return content
+
+
+def usage():
+	print >> sys.stderr, "Usage: %s [-i|--input input-file|- [-o|--output output-file] [-h|--help]"%(sys.argv[0])
+	print >> sys.stderr, "\t-h|--help: print this help"
+	print >> sys.stderr, ""
+
+
+def main():
+	infile = None
+	outfile = None
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], 'i:ho:', [('input=', 'help', 'output=')])
+	
+	except getopt.GetoptError, err:
+		print >> sys.stderr, str(err)
+		usage()
+		sys.exit(2)
+	
+	for o, a in opts:
+		if o in ("-h", "--help"):
+			usage()
+			sys.exit()
+		elif o in ("-i", "--input"):
+			if a != "-":
+				infile = a
+		elif o in ("-o", "--output"):
+			if a != "-":
+				outfile = a
+	
+	if infile is None:
+		content = sys.stdin.read()
+	else:
+		try:
+			f = file(infile, "r")
+		except IOError, err:
+			print >> sys.stderr, "No such file", args[0]
+			sys.exit(2)
+		content = f.read()
+		f.close()
+	
+        content = perform_transform(content)
+	
+	if outfile is None:
+		print content.encode("UTF-8")
+	else:
+		f = file(outfile, "w")
+		f.write(content.encode("UTF-8"))
+		f.close()
+
+
+if __name__ == "__main__":
+	main()

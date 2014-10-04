@@ -1,0 +1,2 @@
+debian/tmp/etc/xrdp/cliprdr.conf
+debian/tmp/usr/sbin/vchannel_cliprdr

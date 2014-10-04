@@ -1,0 +1,25 @@
+Source: ulteo-ovd-vnc-server
+Section: x11
+Priority: optional
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: debhelper (>= 6), cdbs, quilt, wget, libtool, cmake, libxft-dev, libxinerama-dev, libxcursor-dev, libjpeg-dev | libjpeg62-dev, libexpat1-dev, libssl-dev
+Standards-Version: 3.7.3
+
+Package: ulteo-ovd-vnc-server
+Architecture: any
+Depends: x11-common | xserver-common, udev, ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
+Recommends: libgl1-mesa-dri
+Provides: vnc-server
+Description: Virtual network computing server software
+ VNC stands for Virtual Network Computing. It is, in essence, a remote
+ display system which allows you to view a computing `desktop' environment
+ not only on the machine where it is running, but from anywhere on the
+ Internet and from a wide variety of machine architectures.
+ .
+ This package provides a standalone vncserver to which X clients can connect.
+ The server generates a display that can be viewed with a vncviewer.
+ .
+ Note: This server does not need a display. You need a vncviewer to see
+ something. This viewer may also be on a computer running other operating
+ systems.
+

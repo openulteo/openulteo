@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+	  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>Application Server on Ubuntu 10.04 (Lucid Lynx) Installation</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+
+  <para>
+    The purpose of this document is to describe how to install an Ulteo OVD
+    Application Server on the Ubuntu 10.04 (Lucid Lynx) operating system without 
+    the Ulteo OVD application subsystem, to serve the local applications.    
+  </para>
+
+  <important>
+    <para>
+      This server won't support all OVD features because it's not
+      using an Ulteo OVD subsystem. For instance, it won't be possible
+      to install/remove applications on/from this server using the Ulteo OVD
+      Administration Console.
+    </para>
+  </important>
+
+  <section>
+    <title>Prerequisites</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>
+          An installed <emphasis role="strong">Ubuntu 10.04 (Lucid
+          Lynx)</emphasis> system (x86 or amd64).
+        </para>
+      </listitem>
+      
+      <listitem>
+        <para>
+          An Internet connection that provides HTTP access or the Ulteo OVD
+          to install Ubuntu packages.
+        </para>
+      </listitem>
+      
+      <listitem>
+        <para>
+          The Ulteo OVD Session Manager is installed and configured.
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <important>
+      <para>
+	The Application Server has to be a system dedicated 
+	for Ulteo OVD usage only. It may also host another Ulteo OVD
+	server role. However, if multiple roles are installed on the same system, Ulteo 
+	does not guarantee that the system will work correctly.
+      </para>
+    </important>
+
+    <important>
+      <para>
+	In this document, we use 
+	<emphasis>sm.test.demo</emphasis> as the Session Manager
+	address.
+      </para>
+      
+      <para>
+	You need to use the name appropriate to your own environment.
+      </para>
+    </important>
+
+    <para>
+      All operations need to be done as <emphasis>super
+      user</emphasis>.
+    </para>
+
+    <itemizedlist>
+      <listitem>
+	<para>To log in as root:
+	  <screen><![CDATA[$ sudo -s]]></screen>
+	</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+
+  <section>
+    <title>Ubuntu Package Configuration</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>
+	  Edit the <emphasis>/etc/apt/sources.list.d/ulteo_ovd.list</emphasis>
+	  file and add these lines:
+        </para>
+        <screen>
+<![CDATA[deb @BASE_URI@/ubuntu lucid main
+deb http://archive.ulteo.com/ovd/desktop hardy main universe ulteo]]>
+        </screen>
+      </listitem>
+
+      <listitem>
+        <para>
+	  Edit the <emphasis>/etc/apt/preferences.d/ovd-desktop</emphasis>
+	  file and add these lines:
+        </para>
+        <screen>
+<![CDATA[Package: *
+Pin: origin archive.ulteo.com
+Pin-Priority: 1001]]>
+        </screen>
+      </listitem>
+
+      <listitem>
+        <para>
+	  Update the package database:
+        </para>
+        <screen>
+<![CDATA[# apt-get update]]>
+        </screen>
+        <note>
+          <para>
+	    GPG errors given by the previous command will be fixed during
+            the next installation steps. They won't prevent the
+            installation from succeeding.
+          </para>
+        </note>
+      </listitem>
+
+      <listitem>
+        <para>
+          Install the keyring package to validate the repository using
+          gpg:
+        </para>
+        <screen>
+<![CDATA[# apt-get install ulteo-keyring
+# apt-get update]]>
+        </screen>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Package Installation</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>
+	  Install the package <emphasis>ulteo-ovd-subsystem</emphasis>:
+        </para>
+        <screen>
+<![CDATA[# apt-get install ulteo-ovd-desktop ulteo-ovd-slaveserver-role-aps xfonts-base xfonts-encodings]]>
+        </screen>
+      </listitem>
+
+      <listitem>
+        <para>
+	  The only installation data required is the host/IP address of the
+      Session Manager. (We use
+      <ulink url="sm.test.demo" /> here as an example, but of
+	  course, you have to specify your own domain name).
+	</para>
+
+	<para>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="img/subsystem_install_sm_host.png"/>
+            </imageobject>
+            <textobject>
+              <phrase>debconf Session Manager host/address</phrase>
+            </textobject>
+          </inlinemediaobject>
+        </para>
+      </listitem> 
+    </itemizedlist>
+  </section>
+
+  <para>
+    The configuration is now done. The service should be started at
+    the end of the installation and you should see the server appear in
+    the <emphasis>unregistered server</emphasis> page of your Session
+    Manager.
+  </para>
+  <xi:include href="colophon.xml" />
+</article>

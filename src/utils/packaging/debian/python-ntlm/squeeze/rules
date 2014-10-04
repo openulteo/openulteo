@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+unexport CPPFLAGS
+unexport CFLAGS
+unexport CXXFLAGS
+unexport FFLAGS
+unexport LDFLAGS
+export DH_OPTIONS=--buildsystem=python_distutils
+
+%:
+	dh $@

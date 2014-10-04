@@ -1,0 +1,46 @@
+# Copyright (C) 2010 Ulteo SAS
+# http://www.ulteo.com
+# Author Samuel BOVEE <samuel@ulteo.com> 2010
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+AC_INIT([cups2all], [@VERSION@], [http://bugs.ulteo.com])
+AC_PREREQ([2.59])
+AC_COPYRIGHT([Copyright (c) Samuel Bovée])
+AM_INIT_AUTOMAKE([1.8])
+AM_PATH_PYTHON
+
+AC_PATH_PROG(CUPS_CONFIG, cups-config)
+if test "x$CUPS_CONFIG" = x; then
+    AC_MSG_ERROR(You need to install cups-config.)
+fi
+
+CUPSSERVERBIN=`$CUPS_CONFIG --serverbin`
+CUPSSERVERROOT=`$CUPS_CONFIG --serverroot`
+CUPSDATADIR=`$CUPS_CONFIG --datadir`
+
+if test "x${prefix}" != "xNONE" -a "x${prefix}" != "x/usr" ; then
+    CUPSSERVERBIN="${prefix}$CUPSSERVERBIN"
+    CUPSSERVERROOT="${prefix}$CUPSSERVERROOT"
+    CUPSDATADIR="${prefix}$CUPSDATADIR"
+fi
+
+AC_SUBST(CUPSSERVERBIN)
+AC_SUBST(CUPSSERVERROOT)
+AC_SUBST(CUPSDATADIR)
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
+

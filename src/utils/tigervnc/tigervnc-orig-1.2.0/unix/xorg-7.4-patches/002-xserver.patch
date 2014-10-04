@@ -1,0 +1,14 @@
+--- a/os/utils.c	2012-09-12 10:02:32.000000000 +0200
++++ b/os/utils.c	2012-09-13 11:38:27.346706324 +0200
+@@ -657,6 +657,11 @@
+ 	    else
+ 		UseMsg();
+ 	}
++	else if ( strcmp( argv[i], "-co") == 0)
++	{
++	    if(++i >= argc)
++		UseMsg();
++	}
+ 	else if ( strcmp( argv[i], "-core") == 0)
+ 	{
+ 	    CoreDump = TRUE;

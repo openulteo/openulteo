@@ -1,0 +1,126 @@
+== Java ==
+# must be listed BEFORE Ulteo OVD packages
+
+ * sun-java6-jre
+ * sun-java6-plugin
+
+== OVD packages ==
+
+ * tigervnc-server
+ * ulteo-keyring
+ * ulteo-ovd-desktop
+ * ulteo-ovd-slaveserver-role-aps
+ * ulteo-ovd-slaveserver-role-fs
+
+== Desktop applications ==
+
+ * acroread
+ * firefox
+ * thunderbird
+ * libreoffice
+ * libreoffice-gtk
+ * libreoffice-style-crystal
+ * libreoffice-help-en-us
+ * hunspell
+ * pidgin
+ * gimp
+
+== Desktop ==
+
+ * thunar
+ * leafpad
+ * xarchiver
+ * app-install-data
+
+== Minimal system tools ==
+
+ * base-files
+ * base-passwd
+ * bash
+ * bsdutils
+ * coreutils
+ * debianutils
+ * diff
+ * dpkg
+ * e2fsprogs
+ * findutils
+ * grep
+ * gzip
+ * hostname
+ * login
+ * mount
+ * sed
+ * tar
+ * util-linux
+
+== Comfortable Unix System ==
+
+ * adduser
+ * apt
+ * bzip2
+ * debconf
+ * debconf-utils
+ * gettext-base
+ * libfribidi0
+ * locales
+ * lsb-release
+ * module-init-tools
+ * makedev
+ * netbase
+ * passwd
+ * procps
+ * sudo
+ * vim-tiny
+ * cron
+ * file
+ * info
+ * logrotate
+ * mime-support
+ * psmisc
+ * time
+ * nano
+
+== Networking ==
+
+ * wget
+ * ifupdown
+ * iproute
+ * net-tools
+ * openssh-client
+ * libsasl2-modules
+
+== Archives ==
+
+ * zip
+ * unzip
+ * rar
+ * unrar
+
+== Restricted applications ==
+
+ * flashplugin-nonfree
+
+== Language pack ==
+
+ * language-pack-en
+ * language-support-en
+ * language-pack-gnome-en
+ * hunspell-en-us
+
+== Misc ==
+
+ * xfonts-base
+ * xfonts-encodings
+ * x-ttcidfont-conf
+ * ttf-dejavu
+ * ttf-freefont
+ * ttf-kochi-gothic
+ * ttf-kochi-mincho
+ * ttf-arphic-uming
+ * ttf-arabeyes
+ * ttf-baekmuk
+ * ttf-indic-fonts
+ * ttf-malayalam-fonts
+ * ttf-mgopen
+ * ttf-thai-tlwg
+ * ttf-lao

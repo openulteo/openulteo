@@ -1,0 +1,33 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	color: #808080;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 0.85em;
+	background: #ddd;
+}
+
+img {
+	border: none;
+}
+
+a {
+	color: #369;
+	font-weight: bold;
+	border: none;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #963;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+	padding: 0;
+	padding-top: 5px;
+	padding-bottom: 10px;
+	text-align: left;
+	color: #666;
+	font-size: 1.3em;
+}

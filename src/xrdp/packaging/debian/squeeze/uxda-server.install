@@ -1,0 +1,29 @@
+instfiles/init/debian/uxda-server /etc/init.d
+debian/tmp/etc/xrdp/startwm.sh
+debian/tmp/etc/xrdp/*.ini
+debian/tmp/etc/xrdp/xrdp-log.conf
+debian/tmp/etc/xrdp/Xserver
+debian/tmp/etc/pam.d
+debian/tmp/usr/lib/uxda-server/libmc.so*
+debian/tmp/usr/lib/uxda-server/librdp.so*
+debian/tmp/usr/lib/uxda-server/libscp.so*
+debian/tmp/usr/lib/uxda-server/libvnc.so*
+debian/tmp/usr/lib/uxda-server/libxrdp.so*
+debian/tmp/usr/lib/uxda-server/libxup.so*
+debian/tmp/usr/lib/uxda-server/lib_uc_proxy.so*
+debian/tmp/usr/lib/uxda-server/lib_uc_advance.so*
+debian/tmp/usr/lib/*.so*
+debian/tmp/usr/share/xrdp
+debian/tmp/usr/sbin/xrdp
+debian/tmp/usr/sbin/xrdp-logd
+debian/tmp/usr/sbin/xrdp-sesman
+debian/tmp/usr/sbin/xrdp-switch-resolution
+debian/tmp/usr/sbin/xrdp-sessvc
+debian/tmp/usr/bin/xrdp-disconnect
+debian/tmp/usr/bin/xrdp-genkeymap
+debian/tmp/usr/bin/xrdp-keygen
+debian/tmp/usr/bin/xrdp-logoff
+debian/tmp/usr/bin/xrdp-sesadmin
+debian/tmp/usr/bin/xrdp-sesrun
+debian/tmp/usr/bin/xrdp-sestest
+debian/lintian-overrides/uxda-server /usr/share/lintian/overrides/

@@ -1,0 +1,20 @@
+* 02_show_context_menu.patch:
+  patch from ubuntu, modified to hide some entries on the contextual menu
+
+* 12_restricted_menu_on_desktop.patch
+  use the restricted menu directory to display application icons on the menu
+
+* 14_less_scary_tooltips.patch
+  only show the file name in tooltip, or name + comment if the icon is a
+  launcher
+
+* 15_simpler_settings.patch
+  when CustomizeBehavior is not allowed, hide the main checkbox and the
+  behavior tab in the settings dialog
+
+* 16_restore_parent_cursor.patch
+  use the parent cursor instead of forcing GDK_LEFT_PTR (fixes startup
+  notification)
+
+* 17_change_desktop_icon_add_order.patch
+  change the desktop icon add order on the desktop. Desktop and Trash are the first

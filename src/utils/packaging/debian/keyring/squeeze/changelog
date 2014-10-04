@@ -1,0 +1,18 @@
+ulteo-keyring (20101119-1) all; urgency=low
+
+  * add packaging for Ubuntu 12.04
+
+ -- David PHAM-VAN <d.pham-van@ulteo.com>  Wed, 27 Jun 2012 16:00:00 +0100
+
+ulteo-keyring (20101119-1) all; urgency=low
+
+  * second GPG key generated
+  * mask apt-key message during packaging install/deletion
+
+ -- Samuel Bovée <samuel@ulteo.com>  Fri, 19 Nov 2010 15:24:37 +0100
+
+ulteo-keyring (20090729) polaris; urgency=low
+
+  * Initial release.
+
+ -- Gauvain Pocentek <gauvain@ulteo.com>  Wed, 29 Jul 2009 08:41:54 +0200

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#process_tag
+export XRDP_PROCESS=1
+
+USER=$1
+APP=$2
+DIS=$3
+
+echo "su - $USER -c 'export DISPLAY=$DIS && $APP'"
+
+su - $USER -c "export DISPLAY=:$DIS && $APP"
+

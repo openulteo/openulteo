@@ -1,0 +1,13 @@
+Source: cdbs-xfce
+Section: devel
+Priority: optional
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: debhelper (>= 7), cdbs
+Standards-Version: 3.8.4
+Homepage: http://www.ulteo.com/
+
+Package: cdbs-xfce
+Architecture: all
+Depends: cdbs
+Description: XFCE extension for CDBS
+ Add the XFCE makefile extension for complementary to CDBS

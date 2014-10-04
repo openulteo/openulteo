@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY parent "Support_Debian_Squeeze.xml">
+]>
+<article>
+  <transform_var name="distrib_pretty_name"
+                 value="SUSE Linux Enterprise Server (SLES) 11 SP1"/>
+
+  <transform_var name="distrib_name" value="sles"/>
+
+  <transform_var name="distrib_version" value="11_sp1"/>
+
+  <transform_var name="distrib_dvd_url"
+                 value="http://www.novell.com//products/server/"/>
+
+  <transform_var name="rpm_install_cmd" value="zypper"/>
+
+  <transform_var name="rpm_mysql_packages" value="mysql"/>
+
+  <transform_var name="mysql_service" value="mysql"/>
+
+  <transform_var name="apache_service" value="apache2"/>
+
+  <transform_var name="samba_service" value="samba"/>
+
+  <xi:include href="Support_Debian_Squeeze.xml" xpointer="header"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <xi:include href="Support_Debian_Squeeze.xml" xpointer="first_para"
+              xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+  <section id="prerequisites">
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="prerequisites_title"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="prerequisites_root"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="system_requirements"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="warning_name_examples"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  </section>
+
+  <section id="repository">
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="repository_title"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <para id="repository_para">@distrib_pretty_name@ uses the RPM packaging
+    system. An Internet connection that provides HTTP access is required on
+    your @distrib_pretty_name@ system and add an Ulteo RPM repository into
+    your system.</para>
+
+    <section id="repository_online">
+      <xi:include href="Support_Debian_Squeeze.xml"
+                  xpointer="repository_online_title"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <xi:include href="Support_Debian_Squeeze.xml"
+                  xpointer="repository_online_para"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <itemizedlist>
+        <listitem id="repository_online_step1">
+          <para id="repository_online_step1_para">Add the OVD
+          repository:</para>
+
+          <screen>
+# zypper ar @BASE_URI@/@distrib_name@/@distrib_version@ OVD
+          </screen>
+        </listitem>
+
+        <listitem id="repository_online_step2">
+          <para>Install the keyring package to validate the repository using
+          gpg:</para>
+
+          <screen>
+# rpm --import @BASE_URI@/@distrib_name@/@distrib_version@/keyring
+          </screen>
+        </listitem>
+      </itemizedlist>
+      <para id="repository_common_para">
+        <xi:include href="Support_Debian_Squeeze.xml"
+                  xpointer="repository_common_title"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <itemizedlist>
+        <listitem>
+          <xi:include href="Support_Debian_Squeeze.xml"
+                      xpointer="repository_common_step1_para"
+                      xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+          <screen>
+# zypper refresh
+          </screen>
+        </listitem>
+      </itemizedlist>
+      </para>
+    </section>
+
+     
+
+    
+  </section>
+
+  <section id="sm">
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="sm_title"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="sm_first_para"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <section id="sql">
+      <xi:include href="Support_Debian_Squeeze.xml" xpointer="sql_title"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <xi:include href="Support_Debian_Squeeze.xml" xpointer="sql_para"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <itemizedlist>
+        <listitem>
+          <para>Install the <emphasis>mysql</emphasis> package:</para>
+
+          <screen>
+# @rpm_install_cmd@ install @rpm_mysql_packages@
+          </screen>
+        </listitem>
+
+        <listitem>
+          <para>To start automatically MySQL when the system boots up</para>
+
+          <screen>
+# chkconfig @mysql_service@ on
+	  </screen>
+        </listitem>
+
+        <listitem>
+          <para>Start the service</para>
+
+          <screen>
+# service @mysql_service@ start
+	  </screen>
+        </listitem>
+
+        <listitem>
+          <para>Define the root mysql password</para>
+
+          <screen>
+# mysqladmin -u root password 'mysql_root_password'
+	  </screen>
+        </listitem>
+
+        <xi:include href="Support_Debian_Squeeze.xml"
+                    xpointer="mysql_createdb"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </itemizedlist>
+    </section>
+
+    <section id="sm_install">
+      <xi:include href="Support_Debian_Squeeze.xml"
+                  xpointer="sm_install_title"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <itemizedlist>
+        <listitem>
+          <xi:include href="Support_Debian_Squeeze.xml"
+                      xpointer="sm_install_package"
+                      xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+          <screen>
+# @rpm_install_cmd@ install ulteo-ovd-session-manager ulteo-ovd-administration-console
+         </screen>
+        </listitem>
+
+        <listitem>
+          <para>Launch the configuration tool</para>
+
+          <screen>
+# sm-config
+Admin login: admin
+Password: 
+Retype password: 
+Chroot download url [http://archive.ulteo.com/ovd/@VERSION@/subsystem/base.tar.gz]: 
+Chroot destination [/var/cache/ulteo/sessionmanager/base.tar.gz]: 
+
+Options:
+* chroot download:  yes
+* chroot URI:       http://archive.ulteo.com/ovd/@VERSION@/subsystem/base.tar.gz
+* chroot directory: /var/cache/ulteo/sessionmanager/base.tar.gz
+
+Is this correct? [Y/n]
+         </screen>
+
+          <note>
+            <para>If you don't have access to Internet, please use the
+            following command instead of the previous one: <screen> # sm-config --no-download</screen>
+            Then, please read <link linkend="sm_chroot">this</link> to
+            manually get the subsystem archive.</para>
+          </note>
+        </listitem>
+
+        <listitem>
+          <para>Launch the Administration Console configuration tool</para>
+
+          <screen># ovd-administration-console-config
+Session Manager address [127.0.0.1]: 
+         </screen>
+        </listitem>
+
+        <listitem id="sm_configure_apache_service">
+          <para>Configure and start apache service</para>
+
+          <screen># chkconfig @apache_service@ on
+# service @apache_service@ restart         </screen>
+        </listitem>
+      </itemizedlist>
+
+      <xi:include href="Support_Debian_Squeeze.xml" xpointer="sm-config"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+      <xi:include href="Support_Debian_Squeeze.xml" xpointer="sm_chroot"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+       <section id="php_conf">
+		<title>PHP Settings</title>
+			<para>
+				You have to set the timezone setting located in the php configuration file. Edit the php configuration file
+<screen>
+# vi /etc/php.ini
+</screen>
+			Change the setting with your own value (values can be found here <ulink url="http://php.net/manual/en/timezones.php">http://php.net/manual/en/timezones.php</ulink>)
+<screen>
+date.timezone =	Europe/Paris
+</screen> 			
+			Restart the Apache server	
+			<screen>
+# service httpd restart
+</screen> 			
+			
+			</para>
+       </section>
+    </section>
+  </section>
+
+  <section id="subsystem">
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="subsystem_title"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <itemizedlist>
+      <listitem>
+        <xi:include href="Support_Debian_Squeeze.xml"
+                    xpointer="subsystem_package"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+        <screen>
+# @rpm_install_cmd@ install ulteo-ovd-subsystem
+        </screen>
+
+        <important>
+          <para>Due to a conflict, you may have to uninstall
+          <emphasis>@samba_service@</emphasis> packages before installing the
+          ulteo-ovd-session-manager package. <para> Remove the
+          <emphasis>@samba_service@</emphasis> client and server packages:
+          <screen># @rpm_install_cmd@ remove @samba_service@*</screen>
+          </para></para>
+        </important>
+      </listitem>
+
+      <listitem>
+        <para>Launch the configuration tool</para>
+
+        <screen>
+# ovd-subsystem-config 
+Session Manager address : sm.test.demo
+Chroot destination [/opt/ulteo]:
+        </screen>
+
+        <xi:include href="Support_Debian_Squeeze.xml"
+                    xpointer="subsystem-sm-warning"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </listitem>
+
+      <listitem>
+        <para>Configure and start the Ulteo service</para>
+
+        <screen>
+# chkconfig ulteo-ovd-subsystem on
+# service ulteo-ovd-subsystem restart
+         </screen>
+      </listitem>
+    </itemizedlist>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="subsystem_last_para"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="subsystem_last_screenshot"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml"
+                xpointer="aps_redirection_name"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  </section>
+
+  <section id="wc">
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="wc_title"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="wc_para_1"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="wc_para_2"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <itemizedlist>
+      <listitem>
+        <xi:include href="Support_Ubuntu_Hardy.xml" xpointer="wc_package"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+        <screen># @rpm_install_cmd@ install ulteo-ovd-web-client ulteo-ovd-web-client-ajaxplorer ulteo-ovd-guacamole        </screen>
+
+        <important id="repository_offline_warning2">
+          <para>The HTML5 client is enabled by installing ulteo-ovd-guacamole
+          package. By default, it's based on using Tomcat 6 server</para>
+        </important>
+      </listitem>
+
+      <listitem>
+        <para>Launch the configuration tool</para>
+
+        <screen># ovd-webclient-config
+Do you want to link the Web Portal to a specific Session Manager ? ([yes]/no): 
+Session Manager address [127.0.0.1]: sm.test.demo        </screen>
+      </listitem>
+
+      <listitem>
+        <xi:include href=""
+                    xpointer="xpointer(//*[@id='sm_configure_apache_service']/node())"
+                    xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </listitem>
+
+      <listitem>
+        <para>Configure and start tomcat 6 service <screen># chkconfig tomcat6 on
+# service tomcat6 restart</screen></para>
+      </listitem>
+
+      <listitem>
+        <para>Configure and start guacd service <screen># chkconfig guacd on
+# service guacd restart</screen></para>
+      </listitem>
+    </itemizedlist>
+
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="wc_last_1"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    <xi:include href="Support_Debian_Squeeze.xml" xpointer="wc_last_2"
+                xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  </section>
+
+  <xi:include href="colophon.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</article>

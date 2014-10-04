@@ -1,0 +1,14 @@
+Source: ulteo-keyring
+Section: misc
+Priority: optional
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: cdbs, debhelper (>= 6)
+Standards-Version: 3.7.3
+
+Package: ulteo-keyring
+Priority: important
+Architecture: all
+Depends: gnupg (>= 1.0.6-4)
+Description: GnuPG key of the Ulteo repository
+ The Ulteo repository digitally signs its Release files. This package
+ contains the repository key used for that.

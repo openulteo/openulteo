@@ -1,0 +1,14 @@
+#! /bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+sed -i "/^AFTER/c AFTER = 'ovd'" /usr/lib/ubiquity/plugins/ubi-summary.py
+sed -i "s/ready_text_label/ovd_text_label/" /usr/share/ubiquity/gtk/stepLanguage.ui
+sed -i "s/'ready_text_label'/'ovd_text_label'/" /usr/lib/ubiquity/plugins/ubi-language.py
+
+xsltproc -o /usr/share/ubiquity/gtk/stepUserInfo.ui /usr/lib/ubiquity/ovd-setup/stepUserInfo.xslt \
+            /usr/share/ubiquity/gtk/stepUserInfo.ui
+
+#DEBHELPER#
+
+exit 0

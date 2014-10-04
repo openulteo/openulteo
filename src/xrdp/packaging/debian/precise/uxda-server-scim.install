@@ -1,0 +1,6 @@
+debian/tmp/etc/xrdp/ukbrdr.conf
+debian/tmp/usr/bin/ukbrdr
+debian/tmp/etc/xrdp/scim
+debian/tmp/usr/lib/scim-1.0/*/IMEngine/xrdp.so
+debian/tmp/usr/share/scim
+debian/tmp/usr/bin/xrdp-scim-panel

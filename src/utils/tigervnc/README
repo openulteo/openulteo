@@ -1,0 +1,12 @@
+To compile tigervnc server
+
+ - Tigervnc directory have already been patched by 001-build.patch  002-keypad.patch 003-xserver.patch 004-mesa.patch
+ - First, use autogen script : 
+     - initialize data and module
+     - download all X server sources
+     - create xorg and xorg.build directories
+     - Compile the Xserver and tigervnc
+     
+  - In developement mode, make only one time the autogen script, 
+     and then you can modify the wanted lib. and to rebuild, use autogen_rebuild script
+~

@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+. /usr/share/debconf/confmodule
+
+[ "$1" != "upgrade" ] && update-alternatives --remove Xvnc /usr/bin/xovdvnc
+
+#DEBHELPER#
+
+exit 0

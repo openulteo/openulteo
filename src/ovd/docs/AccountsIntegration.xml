@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+	  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>User Account Integration</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+
+  <para>
+    In order to simplify the installations steps, the default
+    configuration of the Session Manager provides a static user
+    list. It is also possible to manage static users from the
+    user interface or to define users from an external directory database.
+  </para>
+
+  <para>
+    For now, <emphasis role="strong">LDAP</emphasis> and
+    <emphasis role="strong">Active Directory</emphasis> are supported.
+  </para>
+
+  <para>
+    With the internal system, it is possible to create, remove and
+    customize users.
+  </para>
+
+  <para>
+    This configuration is available in the Administration console at
+    <emphasis role="strong">Configuration</emphasis> -> <emphasis
+    role="strong">Profiles Settings</emphasis>.
+  </para>
+
+  <para>
+    The <emphasis>Profile</emphasis> setting is made of the following parts:
+    <itemizedlist>
+      <listitem>
+	<para>Database access (host, login ...)</para>
+      </listitem>
+
+      <listitem>
+	<para>User management configuration</para>
+      </listitem>
+
+      <listitem>
+	<para>User Group management configuration.</para>
+      </listitem>
+    </itemizedlist>
+
+    <note>
+      <para>
+	It is possible to use User Groups stored in a remote database.
+	By default, User Groups are managed by the internal system.
+      </para> 
+    </note>
+  </para>
+
+  <section>
+    <title>Internal Accounts</title>
+
+    <para>
+    Internal Account Management is the default setting.
+    </para>
+
+    <screenshot>
+      <screeninfo>Session Manager - main page</screeninfo>
+      <graphic fileref="img/profile-internal.png"></graphic>
+    </screenshot>
+
+    <para>
+      This module provides two options:
+      <itemizedlist>
+	<listitem>
+	  <para><emphasis role="strong">Static list: </emphasis> This
+	  is the default option. It's using a static hardcoded user
+	  list. You cannot customize users. Those users don't any password.</para>
+	</listitem>
+	<listitem>
+	  <para><emphasis role="strong">Dynamic list: </emphasis> if
+	  you select this options, you will be able to create your own
+	  users from the <ulink url="users.php">Users page</ulink>.</para>
+	</listitem>
+      </itemizedlist>
+    </para>
+
+    <note>
+      <para>
+	The Dynamic list is the only User module that lets you
+	create, delete or modify users. Other modules have a
+	<emphasis role="strong">read only</emphasis> mode on the
+	database.
+      </para>
+    </note>
+  </section>
+
+
+  <section>
+    <title>LDAP Integration</title>
+
+    <para>
+      Here is a classic LDAP configuration. You have to give the LDAP
+      host and suffix, and the branch where users are stored.
+    </para>
+
+    <para>
+      An administrator account is needed to be able to list the
+      directory if your LDAP does not allow anonymous bind.
+    </para>
+
+    <screenshot>
+      <screeninfo>Session Manager - main page</screeninfo>
+      <graphic fileref="img/profile-ldap.png"></graphic>
+    </screenshot>
+
+    <simplesect>
+      <title>User Groups</title>
+
+      <para>
+	There are two ways to manage LDAP User Groups:
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">Member of:</emphasis> find
+	    User Groups with the MemberOf field of users attributes</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">Posix group:</emphasis>
+	    group information is retrieved by listing a node which
+	    provides the list of User Groups. In order to match Users
+	    and User Groups, the <emphasis>memberuid</emphasis> field
+	    is used.
+	    </para>
+
+	  </listitem>
+	</itemizedlist>
+
+      </para>
+
+      <screenshot>
+	<screeninfo>Session Manager - LDAP integration User Groups</screeninfo>
+	<graphic fileref="img/profile-ldap-ug.png"></graphic>
+      </screenshot>
+    </simplesect>
+
+    <simplesect>
+      <title>Home Directory</title>
+
+      <para>
+	It's possible to configure your integration to define 
+	<emphasis role="strong">CIFS</emphasis> directories for your users
+	so they can use them as their home directory.
+      </para>
+
+      <screenshot>
+	<screeninfo>Session Manager - LDAP integration home dir</screeninfo>
+	<graphic fileref="img/profile-ldap-home.png"></graphic>
+      </screenshot>
+
+      <para>
+	To configure the CIFS homedir, the first step is to give the
+	name of the LDAP field that contains this information.
+      </para>
+
+      <para>
+	Then you have to select the authentication method. In most
+	cases, the <emphasis role="strong">user
+	login/password</emphasis> is the correct one.
+      </para>
+    </simplesect>
+  </section>
+
+
+  <section>
+    <title>Active Directory Integration</title>
+
+    <para>
+      The AD module is derived from the LDAP module but is easier
+      to configure.
+    </para>
+
+    <screenshot>
+      <screeninfo>Session Manager - Profile ad</screeninfo>
+      <graphic fileref="img/profile-ad.png"></graphic>
+    </screenshot>
+
+    <note>
+      <para>
+        If you want to specify a
+	sub <emphasis role="strong">Organization Unit</emphasis> (OU),
+	you have to provide the path separated by commas.
+      </para>
+      <para>
+        For instance: <emphasis>Developers,web,ajax</emphasis>.
+      </para>
+    </note>
+
+    <simplesect>
+      <title>User Groups</title>
+
+      <para>
+	The AD User Group integration uses the LDAP MemberOf field.
+      </para>
+    </simplesect>
+
+    <simplesect>
+      <title>Home Directory</title>
+
+      <para>
+	At the moment, CIFS provides an asynchronous mode using the 
+	<emphasis role="strong">roaming profile</emphasis>.
+	It will be improved in the next version by redirecting directories
+      </para>
+    </simplesect>
+  </section>
+  <xi:include href="colophon.xml" />
+</article>

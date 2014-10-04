@@ -1,0 +1,12 @@
+Source: libchart
+Section: web
+Priority: extra
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: debhelper (>= 6), cdbs, quilt
+Standards-Version: 3.7.3
+
+Package: php-libchart
+Architecture: all
+Depends: php5, php5-gd
+Description: Simple PHP chart drawing library
+ Libchart is a free chart creation PHP library, that is easy to use.

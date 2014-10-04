@@ -1,0 +1,123 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2009 Ulteo SAS
+# http://www.ulteo.com
+# Author Gauvain POCENTEK <gauvain@ulteo.com>
+# Author Julien LANGLOIS <julien@ulteo.com>
+# Author David LECHEVALIER <david@ulteo.com>
+#
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import glob
+import os
+import random
+import re
+import subprocess
+import sys
+import time
+import pwd
+import signal
+
+
+def findPIDForRoot(tag, pid_exception, user=None):
+	files = glob.glob("/proc/[0-9]*")
+	for f in files:
+		if not os.path.isdir(f):
+			continue
+		
+		if int(os.path.basename(f)) == pid_exception:
+			continue
+		
+		try:
+			f_ = file(os.path.join(f, 'environ'), 'r')
+			buffer = f_.read()
+			f_.close()
+		except IOError, err:
+			continue
+		
+		if not tag in buffer:
+			continue
+							
+		return int(os.path.basename(f))
+	
+	return None
+
+
+def findPID(tag, pid_exception, user):
+	files = glob.glob("/proc/[0-9]*")
+	for f in files:
+		if not os.path.isdir(f):
+			continue
+
+		pw = pwd.getpwnam(user)
+		uid = pw.pw_uid
+		if uid == None :
+			print "The user %s did not exist"%(user)
+			return None
+		if not os.stat(f)[4] == uid:
+			continue
+
+		if int(os.path.basename(f)) == pid_exception:
+			continue
+
+		try:
+			f_ = file(os.path.join(f, 'environ'), 'r')
+			buffer = f_.read()
+			f_.close()
+		except IOError, err:
+			continue
+
+		if not tag in buffer:
+			continue
+			
+		return int(os.path.basename(f))
+	return None
+
+
+# main
+try:
+	current_user = os.environ["USER"]
+except KeyError:
+	#no USER environ var when booting
+	sys.exit(2)
+
+if len(sys.argv) != 2:
+	user = current_user
+else :
+	user = sys.argv[1]
+
+if user == None:
+	sys.exit(2)
+
+my_pid = os.getpid()
+func = findPID
+if user in "all" :
+		if not current_user in "root":
+			print "You must be root to close all the xrdp session"
+			sys.exit(2)
+		else:
+			func = findPIDForRoot
+
+pid = func("XRDP_PROCESS", my_pid, user)
+while pid != None :
+	os.kill(pid, signal.SIGKILL)
+	time.sleep(0.2)
+	if os.path.exists("/proc/%i"%(pid)):
+		os.kill(pid, signal.SIGTERM)
+	
+	pid = func("XRDP_PROCESS", my_pid, user)
+
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+	<string name="app_name">Ulteo</string>
+	<string name="Home_title">Open Virtual Desktop</string>
+	<string-array name="screen_res">
+		<item>320x240</item>
+		<item>480x320</item>
+		<item>854x480</item>
+		<item>1280x740</item>
+		<item>1920x1000</item>
+	</string-array>
+	<string-array name="conn_type_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+		<item>3</item>
+		<item>4</item>
+		<item>5</item>
+		<item>6</item>
+	</string-array>
+</resources>

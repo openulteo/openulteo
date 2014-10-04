@@ -1,0 +1,2 @@
+debian/tmp/etc/xrdp/rdpdr.conf
+debian/tmp/usr/sbin/vchannel_rdpdr

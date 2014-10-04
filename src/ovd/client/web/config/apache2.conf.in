@@ -1,0 +1,18 @@
+# Ulteo web client alias
+
+Alias /ovd @DATADIR@/ulteo/webclient
+<Directory @DATADIR@/ulteo/webclient>
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    allow from all
+    DirectoryIndex index.php
+    php_admin_flag magic_quotes_gpc Off
+</Directory>
+
+<Directory @DATADIR@/ulteo/webclient/media>
+    <IfModule mod_expires.c>
+        ExpiresActive On
+        ExpiresDefault "modification plus 1 years"
+    </IfModule>
+</Directory>
