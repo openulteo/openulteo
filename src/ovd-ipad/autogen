@@ -1,0 +1,153 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013 Ulteo SAS
+# http://www.ulteo.com
+# Author David PHAM-VAN <julien@ulteo.com> 2013
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import os
+import subprocess
+import time
+import shutil
+from optparse import OptionParser
+
+
+def replace_in_file(path, source, params, dest=None):
+	f = file(os.path.join(path, source), "r")
+	content = f.read()
+	f.close()
+	
+	for key, val in params.iteritems():
+		content = content.replace("%" + key + "%", val)
+	
+	if dest == None:
+		dest = source.replace(".in", "")
+	
+	f = file(os.path.join(path, dest), "w")
+	f.write(content)
+	f.close()
+
+
+def put_artwork(options, dst):
+	if not os.path.isdir(os.path.dirname(dst)):
+		os.makedirs(os.path.dirname(dst))
+	
+	src = os.path.join(options.artwork, os.path.basename(dst))
+	if not os.path.isfile(src):
+		src = os.path.join(options.path, "artwork", os.path.basename(dst))
+	
+	shutil.copy(src, dst)
+
+
+if __name__=="__main__":
+	parser = OptionParser()
+	parser.add_option("-r", "--release", dest="build_type", action="store_const", const="Release", default="Release", help="Configure the build as release")
+	parser.add_option("-d", "--debug", dest="build_type", action="store_const", const="Debug", help="Configure the build as debug")
+	parser.add_option("--path", dest="path", action="store", default=".", help="Path of the sources")
+	parser.add_option("-v", "--version", dest="version", action="store", default=os.environ.get("OVD_VERSION", "99.99"), help="Set the version string")
+	parser.add_option("-k", "--keystore", dest="keystore", action="store", default="ovd-ipad.keychain", help="Set the signing key store")
+	parser.add_option("-i", "--identity", dest="identity", action="store", default="", help="Set the signing key alias")
+	parser.add_option("-p", "--provisonning-profile", dest="profile", action="store", default="", help="Set the provisonning profile")
+	parser.add_option("--domain-name", dest="domain", action="store", default="com.ulteo.ovd2013", help="Set the domain name of the application")
+	parser.add_option("--keystore-passwd", dest="keystore_passwd", action="store", default="1234", help="Set the signing key store password")
+	parser.add_option("-t", "--translations", dest="po_dir", action="store", default="uovdclient", help="Set the ovd translations path")
+	parser.add_option("--icon-name", dest="icon_name", action="store", default="Ovd", help="")
+	parser.add_option("--company-name", dest="cn", action="store", default="Ulteo SAS", help="")
+	parser.add_option("--web-site", dest="web_site", action="store", default="http://www.ulteo.com", help="")
+	parser.add_option("--app-title", dest="app_title", action="store", default="Open Virtual Desktop", help="")
+	parser.add_option("-a", "--artwork", dest="artwork", action="store", default="artwork", help="Set the images path")
+	(options, args) = parser.parse_args()
+	
+	params = {}
+	params["YEAR"] = str(time.localtime().tm_year)
+	params["VERSION"] = options.version
+	params["PRODUCT_IDENTIFIER"] = options.domain
+	params["PRODUCT_NAME"] = options.domain.split('.')[-1]
+	params["CN"] = options.cn
+	params["DN"] = options.icon_name
+	params["WEB_SITE"] = options.web_site
+	params["APP_TITLE"] = options.app_title
+	replace_in_file(options.path, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/FreeRDPMobile-Info.plist.in", params)
+	
+	if options.build_type == "Debug":
+		params["DEBUG"] = "true"
+	else:
+		params["DEBUG"] = "false"
+	
+	params["URDP_INCLUDES"] = "const char* getPdfSpoolDir();"
+	params["PDF_SPOOL_DIR"] = "getPdfSpoolDir()"
+	
+	replace_in_file(options.path, "FreeRDPMobile/FreeRDPMobile/Controller/urdp_config.h.in", params)
+	
+	f=file(os.path.join(options.path, ".buildconfig"), "w")
+	f.write("APPLICATION_NAME=\"%s\"\n" % params["PRODUCT_NAME"])
+	f.write("CODE_SIGN_IDENTITY=\"%s\"\n" % options.identity)
+	f.write("PROVISONNING_PROFILE=\"%s\"\n" % options.profile)
+	f.write("KEYCHAIN_PASSWORD=\"%s\"\n" % options.keystore_passwd)
+	f.write("CONFIGURATION=\"%s\"\n" % options.build_type)
+	f.write("KEYCHAIN=\"%s\"\n" % options.keystore)
+	f.write("KEYCHAINS=\"login.keychain %s System.keychain\"\n" % options.keystore)
+	f.close()
+
+	subprocess.call([os.path.join(options.path, "i18n", "svn2xcode.py"), "-s", options.po_dir, "-o", os.path.join(options.path, "FreeRDPMobile", "FreeRDPMobile", "SupportingFiles", "i18n")])
+
+	if os.path.isfile(os.path.join(options.path, "artwork", "Makefile")):
+		subprocess.call(["make", "-C", os.path.join(options.path, "artwork")])
+
+	if os.path.isfile(os.path.join(options.artwork, "Makefile")):
+		subprocess.call(["make", "-C", os.path.join(options.artwork)])
+
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/login.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/one_finger_hold_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/one_finger_tap_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/three_finger_tap_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/toolbar.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/two_finger_drag_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/two_finger_drag_gestureworks_custom.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/two_finger_scale_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/two_finger_scale_gestureworks_custom.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Help/img/two_finger_tap_gestureworks.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/32.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/128.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/FloatingToolbarBG.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/FloatingToolbarHelp.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/FloatingToolbarQuit.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-29.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-40.png")	
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-58.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-50.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-72.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-57.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-80.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-100.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-114.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-76.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-120.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-144.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/AppIcon.appiconset/Icon-152.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/logo_small.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/ulteo.big.png")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/ulteo-bandeau-light.jpg")
+	put_artwork(options, "FreeRDPMobile/FreeRDPMobile/SupportingFiles/Images/ulteo_big_logo_text.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default-568h@2x.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default@2x.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default-Landscape@2x~ipad.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default-Landscape~ipad.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default-Portrait@2x~ipad.png")
+	put_artwork(options, "FreeRDPMobile/OVDiPad/Images.xcassets/LaunchImage.launchimage/Default-Portrait~ipad.png")
+

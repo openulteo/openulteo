@@ -1,0 +1,29 @@
+Ulteo Open Virtual Desktop - Session Manager
+============================================
+
+Installation
+------------
+
+If you install from svn you'll need to have these packages installed:
+ - autogen
+ - autconf
+ - intltool
+ - make
+
+To prepare the sources run:
+$ ./autogen.sh
+
+The first step is to run:
+
+$ ./configure
+$ make
+$ make install # you might need to be root
+
+Configuration
+-------------
+
+To configure the session manager, run as root:
+$  sm-config
+
+See sm-config(1) or `sm-config --help` for options.
+

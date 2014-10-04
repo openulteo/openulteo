@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<!--
+ Copyright (C) 2008-2014 Ulteo SAS
+ http://www.ulteo.com
+ Author Gauvain POCENTEK <gpocentek@linutop.com> 2008-2009
+ Author Julien LANGLOIS <julien@ulteo.com> 2009-2010
+ Author Jeremy DESVAGES <jeremy@ulteo.com> 2009-2010
+ Author Samuel BOVEE <samuel@ulteo.com> 2010-2011
+ Author Thomas MOUTON <thomas@ulteo.com> 2010-2011
+ Author David LECHEVALIER <david@ulteo.com> 2010, 2013
+ Author Guillaume DUPAS <guillaume@ulteo.com> 2010
+ Author Yann HODIQUE <y.hodique@ulteo.com> 2012
+ Author David PHAM-VAN <d.pham-van@ulteo.com> 2012, 2013, 2014
+ Author Vincent ROULLIER <v.roullier@ulteo.com> 2013
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; version 2
+ of the License.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+
+<project name="ulteo" default="applet">
+
+  <property name="build.sysclasspath" value="last"/>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="required_libraries/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+
+  <property name="javac.debug"       value="false"/>
+  <property name="version"           value="@VERSION@" />
+  <property name="mingw32.prefix"    value="i586-mingw32msvc-"/>
+
+  <property name="keystore.path"     value="certificate/keystore"/>
+  <property name="keystore.password" value="123456"/>
+  <property name="keystore.alias"    value="ulteo"/>
+
+  <property name="destdir"      location="" />
+  <property name="prefix"       location="/usr/local" />
+  <property name="datadir"      location="${destdir}${prefix}/share" />
+  <property name="bindir"       location="${destdir}${prefix}/bin" />
+  <property name="applets.dir"  location="${datadir}/ulteo/applets" />
+  <property name="install.dir"  location="${datadir}/java" />
+
+  <property name="distdir"      value="dist" />
+  <property name="sdist.source" value="ovd-java-clients" />
+  <property name="sdist.name"   value="${sdist.source}-${version}" />
+  <property name="sdist.dir"    location="${distdir}/${sdist.name}" />
+
+  <path id="minimal.path">
+    <pathelement location="required_libraries/gnu-getopt.jar" />
+    <pathelement location="required_libraries/log4j-1.2.jar" />
+    <pathelement location="required_libraries/registry.jar" />
+  </path>
+
+  <target name="clean" description="clean files">
+    <delete dir="build"/>
+    <delete dir="jars"/>
+  </target>
+
+  <target name="precompile">
+    <delete dir="build"/>
+    <mkdir dir="build"/>
+    <mkdir dir="jars"/>
+    <mkdir dir="dist"/>
+  </target>
+
+  <target name="precompile_client">
+    <antcall target="precompile" />
+    <mkdir dir="build/resources/keymaps"/>
+    <copy todir="build/resources/keymaps">
+      <fileset dir="keymaps"/>
+    </copy>
+    <mkdir dir="build/resources/integration/linux/"/>
+    <copy todir="build/resources/integration/linux/">
+      <fileset dir="misc/desktopIntegration/linux"/>
+    </copy>
+    <mkdir dir="build/resources/print"/>
+    <copy todir="build/resources/print">
+      <fileset dir="externals"/>
+    </copy>
+    <copy file="misc/krb5.ini" todir="build/resources" />
+    <copy file="misc/login.conf" todir="build/resources" />
+    <echo file="build/VERSION" message="${version}" />
+  </target>
+
+
+  <!-- RDP Client part -->
+
+  <target name="rdpClient">
+    <antcall target="precompile_client" />
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="image4j.jar, jshortcut.jar" />
+    </unjar>
+    <javac srcdir="src;src1.4" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5" includes="org/ulteo/rdp/RdpClient.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <path refid="minimal.path" />
+        <pathelement location="required_libraries/jpedal.jar"/>
+        <pathelement location="required_libraries/commons-httpclient-3.0.1.jar" />
+        <pathelement location="required_libraries/commons-logging-1.1.1.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="rdpClient.jar" depends="rdpClient">
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="gnu-getopt.jar, log4j-1.2.jar, jpedal.jar, registry.jar,
+                       commons-httpclient-3.0.1.jar, commons-logging-1.1.1.jar" />
+    </unjar>
+    <copy file="icons/ulteo.png" todir="build/pics" />
+    <jar destfile="jars/RDPClient.jar" basedir="build">
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.rdp.RdpClient"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="rdpClient.install" depends="rdpClient.jar">
+    <copy file="jars/RDPClient.jar" todir="${install.dir}" />
+  </target>
+
+
+  <!-- PDFPrinter part -->
+
+  <target name="PDFPrinter" description="compile PDFPrinter classes">
+    <antcall target="precompile" />
+    <javac srcdir="src" destdir="build" encoding="UTF8" target="1.5" source="1.5"
+           includes="org/ulteo/ovd/printer/PrinterApplet.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <pathelement location="required_libraries/jpedal.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="PDFPrinter.jar" depends="PDFPrinter" description="create PDFPrinter jar">
+    <jar destfile="jars/PDFPrinter.jar" basedir="build">
+      <include name="**"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.ovd.printer.PrinterApplet"/>
+        <attribute name="Class-Path" value="jpedal.jar"/>
+      </manifest>
+    </jar>
+    <signjar keystore="${keystore.path}" storepass="${keystore.password}" alias="${keystore.alias}"
+             jar="jars/PDFPrinter.jar" signedjar="jars/PDFPrinter.jar" />
+  </target>
+
+  <target name="PDFPrinter.install" depends="PDFPrinter.jar"
+          description="install PDFPrinter" >
+    <copy file="jars/PDFPrinter.jar" todir="${applets.dir}" />
+  </target>
+
+
+  <!-- Ovd Integrated Launcher -->
+
+  <target name="ovdIntegratedLauncher">
+    <antcall target="precompile" />
+    <javac srcdir="src" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5"
+           includes="org/ulteo/ovd/integrated/Launcher.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+    </javac>
+  </target>
+
+  <target name="ovdIntegratedLauncher.jar" depends="ovdIntegratedLauncher">
+    <jar destfile="jars/ovdIntegratedLauncher.jar" basedir="build">
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.ovd.integrated.Launcher"/>
+      </manifest>
+    </jar>
+    <signjar keystore="${keystore.path}" storepass="${keystore.password}" alias="${keystore.alias}"
+             destdir="jars" >
+        <fileset dir="jars" includes="ovdIntegratedLauncher.jar" />
+    </signjar>
+  </target>
+
+
+  <!-- Ovd External Apps Client -->
+
+  <target name="ovdExternalAppsClient">
+    <antcall target="precompile_client" />
+    <javac srcdir="src;src1.4" destdir="build" encoding="UTF8"
+          target="1.5" source="1.5"
+          includes="org/ulteo/ovd/client/ExternalAppsClient.java"
+          debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <fileset dir="required_libraries" includes="*.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="ovdExternalAppsClient.jar" depends="ovdExternalAppsClient">
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="gnu-getopt.jar, log4j-1.2.jar, registry.jar,
+                       jshortcut.jar, image4j.jar, ini4j.jar, jpedal.jar" />
+    </unjar>
+    <copy todir="build/pics">
+      <filelist dir="icons" files="ulteo.png default_icon.png" />
+    </copy>
+    <jar destfile="jars/OVDExternalAppsClient.jar" basedir="build">
+      <manifest>
+        <attribute name="Main-Class"
+                   value="org.ulteo.ovd.client.ExternalAppsClient"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="ovdExternalAppsClient.install"
+          depends="ovdExternalAppsClient.jar">
+    <copy file="jars/OVDExternalAppsClient.jar" todir="${install.dir}" />
+    <copy file="scripts/OVDExternalAppsClient" todir="${bindir}" />
+  </target>
+
+
+  <!-- OVD native client part -->
+
+  <target name="ovdNativeClient_certificate">
+    <antcall target="precompile_client" />
+    <javac srcdir="src;src1.4" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5"
+           includes="org/ulteo/ovd/premium/Certificate.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <fileset dir="required_libraries" includes="*.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="ovdNativeClient">
+    <antcall target="ovdNativeClient_certificate" />
+    <javac srcdir="src;src1.4" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5"
+           includes="org/ulteo/ovd/client/NativeClient.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <fileset dir="required_libraries" includes="*.jar" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="generate.lang">
+    <basename property="po.lang" file="${po.file}" suffix=".po"/>
+    <echo>Generate "${po.lang}" language</echo>
+    <exec executable="msgfmt" dir=".">
+      <arg value="--java2" />
+      <arg value="-d"/> <arg value="build"/>
+      <arg value="-r"/> <arg value="Messages"/>
+      <arg value="-l"/> <arg value="${po.lang}"/>
+      <arg value="${po.file}"/>
+    </exec>
+  </target>
+
+  <target name="generate.languages" if="languages">
+    <foreach target="generate.lang" param="po.file" >
+      <path><fileset dir="po" includes="*.po" /></path>
+    </foreach>
+  </target>
+
+  <target name="ovdNativeClient_jar">
+    <antcall target="generate.languages" />
+    <copy todir="build/pics">
+      <fileset dir="icons" />
+    </copy>
+  </target>
+
+  <target name="ovdNativeClient_install">
+    <copy file="jars/OVDNativeClient.jar" todir="${install.dir}" />
+    <copy file="scripts/OVDNativeClient" todir="${bindir}" />
+    <copy file="misc/ulteo-ovd-native-client.desktop"
+          todir="${datadir}/applications" />
+    <copy file="icons/ulteo.png" todir="${datadir}/icons" />
+    <copy file="icons/ulteo-128.png" todir="${datadir}/icons" />
+  </target>
+
+  <target name="ovdNativeClient.jar" depends="ovdNativeClient">
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="gnu-getopt.jar, log4j-1.2.jar, registry.jar,
+                       jshortcut.jar, image4j.jar, ini4j.jar,
+                       commons-httpclient-3.0.1.jar, commons-logging-1.1.1.jar" />
+    </unjar>
+    <antcall target="ovdNativeClient_jar" />
+    <jar destfile="jars/OVDNativeClient.jar" basedir="build">
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.ovd.client.NativeClient"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="ovdNativeClient.debian" depends="ovdNativeClient">
+    <unjar src="required_libraries/ini4j.jar" dest="build" />
+    <antcall target="ovdNativeClient_jar" />
+    <jar destfile="jars/OVDNativeClient.jar" basedir="build">
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.ovd.client.NativeClient"/>
+        <attribute name="Class-Path"
+                   value="/usr/share/java/gnu-getopt.jar /usr/share/java/log4j-1.2.jar
+                          /usr/share/java/commons-logging.jar /usr/share/java/commons-httpclient.jar"/>
+      </manifest>
+    </jar>
+    <antcall target="ovdNativeClient_install" />
+  </target>
+
+  <target name="ovdNativeClient.install" depends="ovdNativeClient.jar">
+    <antcall target="ovdNativeClient_install" />
+  </target>
+
+
+  <!-- Applet part -->
+
+  <target name="applet">
+    <antcall target="precompile_client" />
+    <javac srcdir="src;src1.4" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5" includes="org/ulteo/ovd/applet/**.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <path refid="minimal.path" />
+        <pathelement location="${java.home}/lib/plugin.jar"/>
+        <pathelement location="/usr/share/icedtea-web/plugin.jar"/> <!-- for wheezy distribution -->
+        <pathelement location="required_libraries/jpedal.jar"/>
+        <pathelement location="required_libraries/jshortcut.jar"/>
+        <pathelement location="required_libraries/image4j.jar"/>
+        <pathelement location="required_libraries/commons-httpclient-3.0.1.jar" />
+        <pathelement location="required_libraries/commons-logging-1.1.1.jar" />
+      </classpath>
+    </javac>
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="log4j-1.2.jar, jpedal.jar" />
+    </unjar>
+  </target>
+
+  <target name="applet.jar" description="sign jar applets" depends="ovdIntegratedLauncher.jar,applet" >
+    <unjar dest="build">
+      <filelist dir="required_libraries"
+                files="commons-httpclient-3.0.1.jar,commons-logging-1.1.1.jar,jshortcut.jar,registry.jar,image4j.jar" />
+    </unjar>
+    <copy todir="build/pics">
+      <filelist dir="icons" files="ulteo.png default_icon.png" />
+    </copy>
+    <copy file="required_libraries/libWindowsPaths/32/libWindowsPaths.dll"
+          todir="build/resources/WindowsLibs/32" failonerror="false" />
+    <copy file="required_libraries/libWindowsPaths/64/libWindowsPaths.dll"
+          todir="build/resources/WindowsLibs/64" failonerror="false" />
+    <copy file="required_libraries/libXClientArea/32/libXClientArea.so"
+          todir="build/resources/LinuxLibs/32" failonerror="false" />
+    <copy file="required_libraries/libXClientArea/64/libXClientArea.so"
+          todir="build/resources/LinuxLibs/64" failonerror="false" />
+    <copy file="required_libraries/libXClientArea/64/libXClientArea.so"
+          todir="build/resources/LinuxLibs/64" failonerror="false" />
+    <copy file="required_libraries/libPCSC/64/libPCSC.so"
+          todir="build/resources/LinuxLibs/64" failonerror="false" />
+    <copy file="required_libraries/libPCSC/64/libPCSC.dll"
+          todir="build/resources/WindowsLibs/64" failonerror="false" />
+    <copy file="required_libraries/libPCSC/32/libPCSC.so"
+          todir="build/resources/LinuxLibs/32" failonerror="false" />
+    <copy file="required_libraries/libPCSC/32/libPCSC.dll"
+          todir="build/resources/WindowsLibs/32" failonerror="false" />
+    <copy file="required_libraries/librdp/64/librdp.so"
+          todir="build/resources/LinuxLibs/64" failonerror="false" />
+    <copy file="required_libraries/librdp/64/librdp.dll"
+          todir="build/resources/WindowsLibs/64" failonerror="false" />
+    <copy file="required_libraries/librdp/32/librdp.so"
+          todir="build/resources/LinuxLibs/32" failonerror="false" />
+    <copy file="required_libraries/librdp/32/librdp.dll"
+          todir="build/resources/WindowsLibs/32" failonerror="false" />
+    <copy file="required_libraries/jshortcut.dll"
+          todir="build/resources/WindowsLibs/32" failonerror="false" />
+    <copy file="required_libraries/ICE_JNIRegistry.dll"
+          todir="build/resources/WindowsLibs/32" failonerror="false" />
+    <copy file="jars/ovdIntegratedLauncher.jar"
+          todir="build/resources" failonerror="false" />
+    <jar destfile="jars/ulteo-applet.jar" basedir="build">
+      <include name="**" />
+        <manifest>
+          <attribute name="Permissions" value="all-permissions" />
+          <attribute name="Codebase" value="*" />
+          <attribute name="Caller-Allowable-Codebase" value="*" />
+          <attribute name="Application-Library-Allowable-Codebase" value="*" />
+          <attribute name="Application-Name" value="Ulteo OVD" />
+        </manifest>
+    </jar>
+    <signjar keystore="${keystore.path}" storepass="${keystore.password}" alias="${keystore.alias}"
+             destdir="jars" >
+        <fileset dir="jars" includes="ulteo-applet.jar" />
+    </signjar>
+  </target>
+
+  <target name="applet.install" description="install applets"
+          depends="applet.jar">
+    <copy todir="${applets.dir}">
+      <filelist dir="jars" files="ulteo-applet.jar" />
+    </copy>
+  </target>
+
+
+  <!-- VDI part -->
+
+  <target name="vdi">
+    <antcall target="precompile_client" />
+    <javac srcdir="src:src1.4" destdir="build" encoding="UTF8"
+           target="1.5" source="1.5" includes="org/ulteo/vdi/Client.java"
+           debug="${javac.debug}" debuglevel="lines,vars,source">
+      <classpath>
+        <path refid="minimal.path" />
+        <pathelement location="required_libraries/jpedal.jar"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="vdi.jar" depends="vdi">
+    <jar destfile="jars/UlteoVDI.jar"  basedir="build">
+      <include name="**" />
+      <manifest>
+        <attribute name="Main-Class" value="org.ulteo.vdi.Client"/>
+        <attribute name="Class-Path" value="log4j-1.2.jar gnu-getopt.jar jpedal.jar"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="vdi.install" depends="vdi.jar">
+    <copy file="jars/UlteoVDI.jar" todir="${install.dir}" />
+  </target>
+
+
+  <!-- Source tarball part -->
+
+  <target name="dist" description="create a source tarball">
+    <delete dir="${sdist.dir}" />
+    <copy todir="${sdist.dir}">
+      <fileset dir="." includes="build.xml README">
+        <include name="src*/**" />
+        <include name="required_libraries/**" />
+        <include name="keymaps/*" />
+        <include name="scripts/*" />
+        <include name="icons/**" />
+        <include name="externals/**" />
+        <include name="po/*" />
+        <include name="misc/**" />
+        <include name="windowsPathsJNI/*" />
+        <include name="libXClientArea/**" />
+        <include name="libPCSC/**" />
+        <include name="librdp/**" />
+      </fileset>
+    </copy>
+    <tar destfile="${distdir}/${sdist.name}.tar" longfile="gnu"
+         basedir="${distdir}" includes="${sdist.name}/**" />
+    <gzip zipfile="${distdir}/${sdist.name}.tar.gz"
+          src="${distdir}/${sdist.name}.tar" />
+    <delete dir="${sdist.dir}" />
+    <delete file="${distdir}/${sdist.name}.tar" />
+  </target>
+
+</project>

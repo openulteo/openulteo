@@ -1,0 +1,20 @@
+Source: ulteo-ovd-guacamole
+Section: web
+Priority: extra
+Maintainer: David PHAM-VAN <d.pham-van@ulteo.com>
+Build-Depends: debhelper (>= 6), cdbs, python-software-properties, maven2, autoconf, automake, libtool, libcairo2-dev, 
+ openjdk-6-jdk, build-essential, cmake, libssl-dev, libx11-dev, libxext-dev, libxinerama-dev, 
+ libcups2-dev, libxml2, libxml2-dev, libavutil-dev, libssl-dev, libavcodec-dev, libssl-dev, unzip, zip
+Standards-Version: 3.8.3
+
+Package: ulteo-ovd-guacamole
+Architecture: any
+Depends: ${shlibs:Depends}, tomcat6
+Recommends: ulteo-ovd-web-client, apache2
+Conflicts: freerdp, guacamole
+Description: HTML5 web application for accessing remote desktops
+ Guacamole is an HTML5 web application that provides access to a desktop
+ environment using remote desktop protocols. A centralized server acts as a
+ tunnel and proxy, allowing access to multiple desktops through a web browser.
+ No plugins are needed: the client requires nothing more than a web browser
+ supporting HTML5 and AJAX.

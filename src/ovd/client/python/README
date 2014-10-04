@@ -1,0 +1,46 @@
+
+===== ovd-client.py =====
+
+Launch a session using Ulteo Open Virtual Desktop protocol
+
+== Depends ==
+
+ * Linux
+ * Python >=2.4
+ * rdesktop
+ * Optional: cupsys-client for local printers detection
+
+
+== Compatibility ==
+
+  * 1.1
+
+=== Features ===
+
+ * Launch desktop mode session
+
+
+
+==== launch_x_sessions.py ====
+
+Auto launch a defined number of sessions
+
+== Usage ==
+
+launch_x_sessions.py [-h|--help] sm_url Number
+
+ * sm_url: http://sm.test.demo/sessionmanager ...
+ * Number: number of session you want to launch
+
+
+== Depends ==
+
+ * Linux
+ * Python
+ * ovd-client.py
+ * xterm
+ * Session manager userlist.php webservices
+
+== userlist.php ==
+
+copy the userlist.php into /usr/share/ulteo/sessionmanager/webservices/

@@ -1,0 +1,12 @@
+.TH OVDCHROOT "8" "" "ovdchroot @PKG_VERSION@" "User Commands"
+.SH NAME
+ovdchroot \- wrapper for the Ulteo OVD chroot
+.SH SYNOPSIS
+.B ovdchroot [\fIargs\fR]
+.SH DESCRIPTION
+ovdchroot set some environment variables and execute the \fIchroot\fR command
+with the given \fIargs\fR in the Ulteo OVD chroot.
+
+.SH SEE ALSO
+\fIchroot(8)\fR
+

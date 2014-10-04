@@ -1,0 +1,6 @@
+DIRS= \
+	dokan \
+	dokan_control \
+	dokan_mount \
+	dokan_webdav
+

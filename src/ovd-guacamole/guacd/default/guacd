@@ -1,0 +1,14 @@
+# Options to pass to guacd
+#
+
+# RDP Connection Type
+# 0 = UNDEFINED
+# 1 = MODEM
+# 2 = BROADBAND_LOW
+# 3 = SATELLITE
+# 4 = BROADBAND_HIGH
+# 5 = WAN
+# 6 = LAN
+# 7 = AUTO
+#
+#GUACD_RDP_CONNECTION_TYPE=6

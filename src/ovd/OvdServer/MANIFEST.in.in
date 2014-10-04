@@ -1,0 +1,4 @@
+include *.py
+include manpages/*
+include examples/*
+include ovd/Platform/Windows/*.py

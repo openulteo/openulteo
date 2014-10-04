@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+A2CONFDIR=/etc/apache2/conf.d
+
+rm -f $A2CONFDIR/webclient-html5.conf
+
+service apache2 reload || true
+service guacd stop || true
+update-rc.d -f guacd remove
+
+if [ -f /etc/ulteo/webclient/config.inc.php ]; then
+	sed -i "s@define('RDP_PROVIDER_HTML5_INSTALLED', true);@// define('RDP_PROVIDER_HTML5_INSTALLED', true);@g" /etc/ulteo/webclient/config.inc.php
+fi
+
+#DEBHELPER#
+
+exit 0

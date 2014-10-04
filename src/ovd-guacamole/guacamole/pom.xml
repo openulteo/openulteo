@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sourceforge.guacamole</groupId>
+    <artifactId>guacamole-default-webapp</artifactId>
+    <packaging>war</packaging>
+    <version>0.6.0</version>
+    <name>guacamole-default-webapp</name>
+    <url>http://guacamole.sourceforge.net/</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+
+            <!-- Written for 1.6 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    
+                    <!-- Filter webapp dir --> 
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                    
+                    <!-- Add files from guacamole-common-js -->
+                    <overlays>
+                        <overlay>
+                            <groupId>net.sourceforge.guacamole</groupId>
+                            <artifactId>guacamole-common-js</artifactId>
+                            <type>zip</type>
+                        </overlay>
+                    </overlays>
+                    
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <!-- Java servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- SLF4J - logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
+            <version>1.6.1</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Guacamole Java API -->
+        <dependency>
+            <groupId>net.sourceforge.guacamole</groupId>
+            <artifactId>guacamole-common</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+
+        <!-- Guacamole Authentication API -->
+        <dependency>
+            <groupId>net.sourceforge.guacamole</groupId>
+            <artifactId>guacamole-common-auth</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
+        <!-- Guacamole JavaScript API -->
+        <dependency>
+            <groupId>net.sourceforge.guacamole</groupId>
+            <artifactId>guacamole-common-js</artifactId>
+            <version>0.6.0</version>
+            <type>zip</type>
+            <scope>runtime</scope>
+        </dependency>
+
+    </dependencies>
+
+    <repositories>
+        
+        <!-- Central Guacamole repository -->
+        <repository>
+            <id>guac-dev</id>
+            <url>http://guac-dev.org/repo</url>
+        </repository>
+        
+    </repositories>
+
+</project>

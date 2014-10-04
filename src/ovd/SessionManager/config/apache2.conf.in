@@ -1,0 +1,25 @@
+# Ulteo session manager alias
+
+Alias /ovd/client @DATADIR@/ulteo/sessionmanager/client
+<Directory @DATADIR@/ulteo/sessionmanager/client>
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    allow from all
+    DirectoryIndex index.php
+    php_admin_flag magic_quotes_gpc Off
+
+    RewriteEngine On
+    RewriteBase /ovd/client/
+
+    # Deny requests containing .php
+    RewriteCond %{THE_REQUEST} ^.+?\ [^?]+\.php[?\ ]
+    RewriteRule \.php$ - [F]
+
+    # Add .php at the end of the request
+    RewriteCond %{REQUEST_URI}  !^.+\.php$
+    RewriteRule (.*) $1.php [L]
+
+    # Replace all sub "/" by _ in the request URI
+    RewriteRule (.*)/(.*) $1_$2
+</Directory>

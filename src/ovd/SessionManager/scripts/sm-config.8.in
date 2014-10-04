@@ -1,0 +1,53 @@
+.TH SM-CONFIG "8" "July 2009" "sm-config @PKG_VERSION@" "User Commands"
+.SH NAME
+sm-config \- configure Ulteo OVD Session Manager
+.SH SYNOPSIS
+.B sm-config
+[\fI--no-download\fR] [\fI--chroot-uri uri\fR] [\fI--chroot-url url\fR] [\fI--copy\fR] [\fI--chroot-dir dir\fR] [\fI--admin-login login\fR] [\fI--admin-pwd pwd\fR] [\fI--apache-user user\fR] [\fI--apache-dir dir\fR] [\fI--assume-yes\fR] [\fI--version|-v\fR] [\fI--help|-h\fR]
+.SH DESCRIPTION
+Configure an Ulteo Session Manager (Open Virtual Desktop)
+.TP
+\fB\-\-no\-download\fR
+don't download the chroot, assume it is already installed
+.TP
+\fB\-\-chroot\-uri\fR uri
+get the chroot from 'uri'
+recognised protocoles are http://, ftp:// and file://
+(default: @CHROOT_URL@)
+.TP
+\fB\-\-chroot\-url\fR url
+same as --chroot-uri, for backward compatibility
+.TP
+\fB\-\-copy\fR
+if the chroot is a file, copy it in the Session Manager dir
+(a symlink is created by default)
+.TP
+\fB\-\-chroot\-dir\fR dir
+download the chroot as dir/base.tar.gz
+(default: @WEBDIR@/base.tar.gz)
+.TP
+\fB\-\-admin\-login\fR login
+set the admin login to 'login'
+.TP
+\fB\-\-admin\-pwd\fR pwd
+set the admin password to 'pwd'
+.TP
+\fB\-\-apache\-user\fR user
+set the apache user to 'user'
+(default: guess from /etc/passwd)
+.TP
+\fB\-\-apache\-dir\fR dir
+set the apache configuration directory to 'dir'
+(default: guess from /etc/{httpd,apache2})
+.TP
+\fB\-\-cron\-dir\fR dir
+set the cron dir to 'dir' (default: /etc/cron.hourly)
+.TP
+\fB\-\-assume\-yes\fR
+don't ask confirmation
+.TP
+\fB\-\-help\fR|\-h
+display this help
+.TP
+\fB\-\-version\fR|\-v
+display version informations

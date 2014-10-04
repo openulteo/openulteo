@@ -1,0 +1,79 @@
+/**
+ * Copyright (C) 2011-2013 Ulteo SAS
+ * http://www.ulteo.com
+ * Author Harold LEBOULANGER <harold@ulteo.com> 2011
+ * Author David PHAM-VAN <d.pham-van@ulteo.com> 2013
+ *
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ **/
+
+#import <Availability.h>
+
+#define HAVE_OLD_CERTIF
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iPhone SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <CoreGraphics/CoreGraphics.h>
+    #import <QuartzCore/QuartzCore.h>
+    #import <AudioToolbox/AudioToolbox.h>
+    #import <AVFoundation/AVFoundation.h>
+    #import <SystemConfiguration/SystemConfiguration.h>
+#endif
+
+#define DESTROY(x) [x release], x = nil
+
+#ifdef DEBUG_CIMGF
+#define DLog(...) NSLog(@"%s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
+#define DBGLog(...) if ([[Config sharedConfig] debugLogs]) { NSLog(@"%s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]); }
+
+#define ALog(...) [[NSAssertionHandler currentHandler] handleFailureInFunction:[NSString stringWithCString:__PRETTY_FUNCTION__ encoding:NSUTF8StringEncoding] file:[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lineNumber:__LINE__ description:__VA_ARGS__]
+#else
+#define DLog(...) do { } while (0)
+#ifndef NS_BLOCK_ASSERTIONS
+#define NS_BLOCK_ASSERTIONS
+#endif
+#define ALog(...) NSLog(@"%s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__])
+#endif
+
+
+#define DDLogError(...) NSLog(@"Error: %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]);
+#define DDLogInfo(...) NSLog(@"Info: %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]);
+#define DDLogWarn(...) NSLog(@"Warning: %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]);
+#ifdef DEBUG_LOG
+#define DDLogDebug(...) NSLog(@"Debug: %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]);
+#define DDLogVerbose(...) NSLog(@"Verbose: %s %@", __PRETTY_FUNCTION__, [NSString stringWithFormat:__VA_ARGS__]);
+#else
+#define DDLogDebug(...) ;
+#define DDLogVerbose(...) ;
+#endif
+
+
+
+#define CHECKOPCODE(x) if ((x)!=12 && (x) < 16) { DLog(@"unimplemented opcode %d", (x)); }
+
+#define ZAssert(condition, ...) do { if (!(condition)) { ALog(__VA_ARGS__); }} while(0)
+
+#define kWidth  @"kWidth"  
+#define kHeight @"kHeight"
+//#define kZoom @"kZoom"
+
+#define SHOW_RECT(rect) DLog(@"rect: %.0f %.0f %.0f %.0f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
+
+#define _(x) NSLocalizedString(x, x)

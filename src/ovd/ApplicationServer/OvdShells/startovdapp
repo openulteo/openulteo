@@ -1,0 +1,90 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2009-2012 Ulteo SAS
+# http://www.ulteo.com
+# Author Gauvain POCENTEK <gauvain@ulteo.com> 2009
+# Author Julien LANGLOIS <julien@ulteo.com> 2009, 2010, 2012
+# Author Laurent CLOUET <laurent@ulteo.com> 2010
+#
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import os
+import sys
+
+from ovd_shells.Application import Application
+from ovd_shells.CheckFork import CheckFork
+from ovd_shells.CheckOpenOffice import CheckOpenOffice
+from ovd_shells.Monitoring import Monitoring
+from ovd_shells.CheckWorkingDir import CheckWorkingDir
+from ovd_shells.CheckWow64 import CheckWow64
+from ovd_shells.Platform import _platform as Platform
+from ovd_shells import Util
+
+def main():
+	# stop if we don't have the needed env vars
+	if not os.environ.has_key("OVD_SESSION_DIR"):
+		print "no 'OVD_SESSION_DIR' env var define"
+		sys.exit(1)
+	
+	path = os.path.join(os.environ['OVD_SESSION_DIR'], "instances")
+	if not os.path.exists(path):
+		print "no such directory",path
+		sys.exit(1)
+	
+	if not len(sys.argv) > 1:
+		print "no app_id given"
+		sys.exit(1)
+	
+	if not sys.argv[1].isdigit():
+		print "arg is not a integer"
+		sys.exit(1)
+	
+	application_id = int(sys.argv[1])
+	args = sys.argv[2:]
+	
+	application = Application(application_id, args)
+	
+	if not application.isAvailable():
+		print "Application %d is not available"%(application_id)
+		sys.exit(2)
+	
+	cmd = application.getFinalCommand()
+	if cmd is None:
+		print "No available command"
+		sys.exit(2)
+	
+	modules = []
+	modules.append(CheckFork(application))
+	modules.append(CheckOpenOffice(application))
+	modules.append(Monitoring(application))
+	modules.append(CheckWow64(application))
+	modules.append(CheckWorkingDir(application))
+	
+	
+	for module in modules:
+		module.beforeStartApp()
+	
+	Platform.launch(cmd, True)
+	
+	for module in modules:
+		module.afterStartApp()
+	
+	sys.exit(0)
+
+
+if __name__ == "__main__":
+	Util.redirect_to_dump(False)
+	main()

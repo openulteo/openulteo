@@ -1,0 +1,122 @@
+#!/bin/sh
+
+# Copyright (C) 2008-2014 Ulteo SAS
+# http://www.ulteo.com
+# Author Gauvain POCENTEK <gpocentek@linutop.com> 2008-2009
+# Author Jeremy DESVAGES <jeremy@ulteo.com> 2009-2010
+# Author Samuel BOVEE <samuel@ulteo.com> 2010-2011
+# Author Julien LANGLOIS <julien@ulteo.com> 2010
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2012
+# Author David LECHEVALIER <david@ulteo.com> 2014
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+# chkconfig: 2345 90 10
+
+### BEGIN INIT INFO
+# Provides:          ulteo-ovd-subsystem
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
+# Should-Start:      httpd
+# Should-Stop:       httpd
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start Ulteo OVD subsystem
+# Description:       Start Ulteo OVD subsystem and needed services
+### END INIT INFO
+
+. /etc/init.d/functions
+
+[ "$START" = no ] && exit 0
+
+[ -f /etc/default/ulteo-ovd-subsystem ] && . /etc/default/ulteo-ovd-subsystem
+[ -f /etc/ulteo/subsystem.conf ] && . /etc/ulteo/subsystem.conf
+
+_print() {
+    RETVAL=$?
+    if [ $RETVAL -eq 0 ]; then
+        success
+    else
+        failure
+    fi
+    echo "$1"
+}
+
+do_start() {
+    [ -d "$CHROOTDIR" ] || return 1
+
+    /usr/sbin/ovd-subsystem-config --update-only
+
+    # make sure chroot mtab is clean
+    uchroot umount -a
+    
+    # hack to hide a cups issue
+    MODKERNELDIR=$CHROOTDIR/lib/modules/$(uname -r)
+    mkdir -p $MODKERNELDIR
+    touch $MODKERNELDIR/modules.dep
+
+    mount -t proc none $CHROOTDIR/proc 2>/dev/null
+    mount -t devpts none $CHROOTDIR/dev/pts 2>/dev/null
+    mount -t tmpfs none $CHROOTDIR/dev/shm 2>/dev/null
+
+    # Apply chroot fstab
+    uchroot mount -a
+    
+    uchroot service cups start && \
+    uchroot service uxda-server start && \
+    uchroot service smbd start && \
+    uchroot service apache2 start && \
+    uchroot service ulteo-ovd-slaveserver start
+}
+
+do_stop() {
+    [ -d "$CHROOTDIR" ] || return 1
+
+    uchroot service ulteo-ovd-slaveserver stop
+    uchroot service apache2 stop
+    uchroot service smbd stop
+    uchroot service uxda-server stop
+    uchroot service cups stop
+    
+    # make sure chroot mtab is clean
+    uchroot umount -a
+
+    umount $CHROOTDIR/dev/shm 2>/dev/null
+    umount $CHROOTDIR/dev/pts 2>/dev/null
+    umount $CHROOTDIR/proc 2>/dev/null
+
+    return 0
+}
+
+case $1 in
+    start)
+        do_start
+        _print "Starting Ulteo OVD subsystem: "
+        ;;
+    stop)
+        do_stop
+        _print "Stopping Ulteo OVD subsystem: "
+        ;;
+    restart|reload|force-reload)
+        do_stop ; sleep 1 ; do_start
+        _print "Re-starting Ulteo OVD subsystem: "
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|reload|restart}"
+        RETVAL=1
+        ;;
+esac
+
+exit $RETVAL

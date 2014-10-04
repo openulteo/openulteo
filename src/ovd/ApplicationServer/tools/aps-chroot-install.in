@@ -1,0 +1,259 @@
+#!/bin/sh
+
+PROGRAM=$(basename $0)
+CURLOPTS="--retry 3 --connect-timeout 60"
+
+# helper functions
+die () {
+    echo $@
+    exit 1
+}
+
+usage ()
+{
+    echo -n "Usage: $PROGRAM [--no-download] [--no-cups] [--fqdn fqdn] [--sm-url url]"
+    echo " [--chroot-path path] [--apache-group group] [--apache-dir dir] [--help|-h]"
+    echo "Configure an Ulteo Application Server (Open Virtual Desktop)"
+    echo
+    echo "  --no-download        don't download the chroot, assume it is already installed"
+    echo "  --no-cups            don't configure cups in the chroot"
+    echo "  --fqdn fqdn          set the full qualified domain name to 'fqdn'"
+    echo "  --sm-url url         set the session manager url to 'url'"
+    echo "  --chroot-path path   set the chroot path to 'path'"
+    echo "  --apache-user user   set the apache user to 'user'"
+    echo "  --apache-dir dir     set the apache configuration directory to 'dir'"
+    echo "  --assume-yes         don't ask confirmation"
+    echo "  --help|-h            display this help"
+    echo "  --version|-v         display version informations"
+}
+
+set_conf () {
+    # $1: configfile
+    # $2: field
+    # $3: value
+    if grep -q "^$2=" $1 2>/dev/null; then
+        sed -i "s#^$2=.*#$2=$3#" $1
+    else
+        echo "$2=$3" >> $1
+    fi
+}
+
+
+get_chroot () {
+    mkdir -p $CHROOT_PATH || die Unable to create $CHROOT_PATH. Aborting.
+
+    # Test if the file can be downloaded
+    curl $CURLOPTS -s -I "$SM_URL/base.tar.gz" | grep -qe "HTTP.*200 OK" || \
+        die Unable to reach the chroot tarball. Aborting.
+
+    curl $CURLOPTS "$SM_URL/base.tar.gz" | tar zx --numeric-owner --preserve -C "$CHROOT_PATH" -f - || \
+        die An error occurred while downloading the chroot. Aborting.
+}
+
+
+# parse the command line
+unset NODOWNLOAD
+unset NOCUPS
+unset FQDN
+unset SM_URL
+unset CHROOT_PATH
+unset APACHE_USER
+unset APACHE_DIR
+NOCONFIRM=0
+while [ "$1" != "" ]; do
+    case $1 in
+        --no-download)
+            NODOWNLOAD=1;;
+        --no-cups)
+            NOCUPS=1;;
+        --fqdn)
+            FQDN="$2"
+            shift;;
+        --sm-url)
+            SM_URL="$2"
+            shift;;
+        --chroot-path)
+            CHROOT_PATH="$2"
+            shift;;
+        --apache-user)
+            APACHE_USER="$2"
+            shift;;
+        --apache-dir)
+            APACHE_DIR="$2"
+            shift;;
+        --assume-yes)
+            NOCONFIRM=1;;
+        --help|-h)
+            usage
+            exit 0;;
+        --version|-h)
+            echo $PROGRAM @PKG_VERSION@
+            exit 0;;
+        *)
+            usage
+            exit 1;;
+    esac
+    shift
+done
+
+# let's request the informations
+# fqdn first
+HOSTNAME=$(hostname 2>/dev/null)
+if which dnsdomainname >/dev/null 2>&1; then
+    DOMAINNAME=$(dnsdomainname 2>/dev/null)
+fi
+FQDNPROPOSAL="$HOSTNAME"
+if [ "$DOMAINNAME" != "" ]; then
+    FQDNPROPOSAL="$HOSTNAME.$DOMAINNAME"
+fi
+
+while [ -z "$FQDN" ]; do
+    echo -n "Full Qualified Domain Name [$FQDNPROPOSAL]: "
+    read FQDN
+    if [ -z "$FQDN" ]; then FQDN=$FQDNPROPOSAL; fi
+done
+
+# SM URL
+while [ -z "$SM_URL" ]; do
+    echo -n "Session Manager URL: "
+    read SM_URL
+done
+
+# where to uncompress the chroot
+while [ -z "$CHROOT_PATH" ]; do
+    echo -n "Chroot installation path: "
+    read CHROOT_PATH
+done
+
+# try to guess the apache group, if we can't, ask if to the admin
+while [ -z "$APACHE_USER" ]; do
+    for guess in apache www-data wwwrun; do
+        if grep ^$guess: /etc/passwd >/dev/null 2>&1; then
+            APACHE_USER=$guess
+            break
+        fi
+    done
+    if [ -z "$APACHE_USER" ]; then
+        echo -n "Apache user: "
+        read APACHE_USER
+    fi
+done
+
+while [ -z "$APACHE_DIR" ]; do
+    if [ -d "/etc/httpd/conf.d" ]; then
+        APACHE_DIR=/etc/httpd/conf.d
+    elif [ -d "/etc/apache2/conf.d" ]; then
+        APACHE_DIR="/etc/apache2/conf.d"
+    fi
+    if [ -z "APACHE_DIR" ]; then
+        echo -n "Apache configuration directory: "
+        read APACHE_DIR
+    fi
+done
+
+echo
+echo "Options:"
+echo "* FQDN: $FQDN"
+echo "* SM URL: $SM_URL"
+echo "* chroot path: $CHROOT_PATH"
+echo -n "* chroot download: "
+if [ -z "$NODOWNLOAD" ]; then
+    echo "yes"
+else
+    echo "no"
+fi
+echo "* apache user: $APACHE_USER"
+echo "* apache dir:  $APACHE_DIR"
+
+if [ "$NOCONFIRM" -ne 1 ]; then
+    echo
+    echo -n "Is this correct? [Y/n] "
+    read GO
+    [ -z "$GO" ] && GO=Y
+    case $GO in
+        Y|y)
+            # continue
+            ;;
+        *)
+            echo "Aborting."
+            exit 0
+            ;;
+    esac
+fi
+
+MAIN_CONFFILE=@SYSCONFDIR@/ulteo-ovd.conf
+# we assume here that a default chroot is used, thus we know where the conffile
+# is installed
+CHROOT_CONFFILE="$CHROOT_PATH/etc/ulteo-ovd.conf"
+
+# set the host conf
+set_conf $MAIN_CONFFILE "CHROOT" "$CHROOT_PATH"
+set_conf $MAIN_CONFFILE "LOG_WWW" "@LOCALSTATEDIR@/log/ulteo/applicationserver"
+set_conf $MAIN_CONFFILE "WWW_USER" "$APACHE_USER"
+
+[ -z "$NODOWNLOAD" ] && get_chroot
+
+# set the chroot conf
+set_conf "$CHROOT_CONFFILE" "SERVERNAME" "$FQDN"
+set_conf "$CHROOT_CONFFILE" "SESSION_MANAGER_URL" "$SM_URL"
+[ -f /etc/resolv.conf ] && cp /etc/resolv.conf \
+    $CHROOT_PATH/etc/resolv.conf
+[ -f /etc/hosts ] && cp /etc/hosts \
+    $CHROOT_PATH/etc/hosts
+chown $APACHE_USER "$CHROOT_CONFFILE"
+
+# set owner on spool and log files
+chown $APACHE_USER:root @LOCALSTATEDIR@/log/ulteo/applicationserver
+chmod 0770 @LOCALSTATEDIR@/log/ulteo/applicationserver
+chown -R $APACHE_USER:root @LOCALSTATEDIR@/spool/ulteo/applicationserver
+chmod 0770 @LOCALSTATEDIR@/spool/ulteo/applicationserver
+
+# update the apache uid and gid in the chroot
+if [ "$APACHE_USER" = "wwwrun" ]; then
+    APACHE_GROUP="www"
+else
+    APACHE_GROUP="$APACHE_USER"
+fi
+APACHE_UID=$(getent passwd $APACHE_USER | cut -d ":" -f "3")
+APACHE_GID=$(getent group $APACHE_GROUP | cut -d ":" -f "3")
+sed -i -r "s/^www-data:x:33:[^:]+:/www-data:x:$APACHE_UID:$APACHE_GID:/" $CHROOT_PATH/etc/passwd
+sed -i "s/^www-data.*$/www-data:x:$APACHE_GID:/" $CHROOT_PATH/etc/group
+
+# set the main vhost
+ALIASFILE=@SYSCONFDIR@/ulteo/applicationserver/apache2.conf
+ln -sf $ALIASFILE $APACHE_DIR/application-server.conf
+
+# give write permissions to apache for the htaccess file
+HTACCESS=@SYSCONFDIR@/ulteo/applicationserver/dot.htaccess
+chown $APACHE_USER:root $HTACCESS
+chmod 660 $HTACCESS
+
+# set cups
+if [ -z "$NOCUPS" -a -e "$CHROOT_PATH/var/spool/cups2all" ]; then
+    chown -R $APACHE_USER $CHROOT_PATH/var/spool/cups2all
+    chroot $CHROOT_PATH chown -R lp /var/spool/cups2all
+    chmod -R 2770 $CHROOT_PATH/var/spool/cups2all
+fi
+
+# set the timezone (if possible)
+HOSTTZ=
+if [ -f /etc/timezone ]; then
+    # debian
+    HOSTTZ=$(head -n 1 /etc/timezone)
+elif [ -f /etc/sysconfig/clock ]; then
+    # redhat
+    HOSTTZ=$(grep '^ZONE=' /etc/sysconfig/clock | cut -d = -f 2 | sed "s/['\"]//g")
+fi
+if [ -n "$HOSTTZ" -a -f $CHROOT_PATH/usr/share/zoneinfo/$HOSTTZ ]; then
+    cp /usr/share/zoneinfo/$HOSTTZ $CHROOT_PATH/etc/localtime
+    echo "$HOSTTZ" > $CHROOT_PATH/etc/timezone
+fi
+
+
+echo "Installation done."
+echo "To activate the service you now need to:"
+echo " * restart the web server"
+echo " * run the following command: "
+echo "   chroot $CHROOT_PATH /etc/init.d/ulteo-ovdd start"
+
+exit 0

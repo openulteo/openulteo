@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<!--
+    Guacamole - Clientless Remote Desktop
+    Copyright (C) 2010  Michael Jumper
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <link rel="icon" type="image/png" href="images/guacamole-logo-64.png"/>
+        <link rel="stylesheet" type="text/css" href="styles/login.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+        <title>Guacamole ${project.version}</title>
+    </head>
+
+    <body>
+
+        <div id="login-ui" style="display: none">
+            <div id="login-dialog-middle">
+
+                <div id="login-dialog">
+
+                    <p id="login-error"></p>
+
+                    <form id="login-form" action="#" method="post">
+
+                        <div id="login-fields">
+                            <table>
+                                <tr>
+                                    <th>Username</th>
+                                    <td><input type="text" name="username" id="username" autofocus="autofocus"/></td>
+                                </tr>
+                                <tr>
+                                    <th>Password</th>
+                                    <td><input type="password" name="password" id="password"/></td>
+                                </tr>
+                            </table>
+
+                            <img class="logo" src="images/guacamole-logo-64.png" alt=""/>
+                        </div>
+
+                        <div id="buttons">
+                            <input type="submit" name="login" id="login" value="Login"/>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Connection list UI -->
+        <div id="connection-list-ui" style="display: none">
+
+            <div id="logout-panel">
+                <button id="logout">Logout</button>
+            </div>
+            
+            <h1>
+                <img class="logo" src="images/guacamole-logo-64.png" alt=""/>
+                Available Connections
+            </h1>
+            
+            <table class="connections">
+                <thead>
+                    <tr>
+                        <th class="protocol"> </th>
+                        <th class="name">Name</th>
+                    </tr>
+                </thead>
+                <tbody id="connections-tbody">
+                </tbody>
+            </table>
+
+        </div>
+
+        <div id="version-dialog">
+            Guacamole ${project.version}
+        </div>
+
+        <script type="text/javascript" src="scripts/connections.js"></script>
+
+        <!-- Init -->
+        <script type="text/javascript"> /* <![CDATA[ */
+
+            function resetUI() {
+
+                var configs;
+                try {
+                    configs = getConfigList();
+                }
+                catch (e) {
+
+                    // Show login UI if unable to get configs
+                    loginUI.style.display = "";
+                    connectionListUI.style.display = "none";
+
+                    return;
+
+                }
+
+                // If only one connection, redirect to that.
+                if (configs.length == 1) {
+                    window.location.href = "client.xhtml?" + encodeURIComponent(configs[0].id);
+                    return;
+                }
+
+                // Remove all rows from connections list
+                var tbody = document.getElementById("connections-tbody");
+                tbody.innerHTML = "";
+                
+                // Add one row per connection
+                for (var i=0; i<configs.length; i++) {
+
+                    // Create row and cells
+                    var tr = document.createElement("tr");
+                    var protocol = document.createElement("td");
+                    var id = document.createElement("td");
+
+                    var protocolIcon = document.createElement("div");
+                    protocolIcon.className = "protocol icon " + configs[i].protocol;
+
+                    // Set CSS
+                    protocol.className = "protocol";
+                    id.className = "name";
+
+                    // Create link to client
+                    var clientLink = document.createElement("a");
+                    clientLink.setAttribute("href",
+                        "client.xhtml?" + encodeURIComponent(configs[i].id));
+
+                    // Set cell contents
+                    protocol.appendChild(protocolIcon);
+                    //protocol.textContent   = configs[i].protocol;
+                    clientLink.textContent = configs[i].id;
+                    id.appendChild(clientLink);
+
+                    // Add cells
+                    tr.appendChild(protocol);
+                    tr.appendChild(id);
+
+                    // Add row
+                    tbody.appendChild(tr);
+
+                }
+
+                // If configs could be retrieved, display list
+                loginUI.style.display = "none";
+                connectionListUI.style.display = "";
+
+            }
+
+            var loginForm = document.getElementById("login-form");
+            var loginUI = document.getElementById("login-ui");
+            var connectionListUI = document.getElementById("connection-list-ui");
+            var logout = document.getElementById("logout");
+
+            logout.onclick = function() {
+                window.location.href = "logout";
+            };
+
+            // TODO: Get connection list
+            // On no-auth fail, show login UI 
+
+            loginForm.onsubmit = function() {
+
+                var username = document.getElementById("username");
+                var password = document.getElementById("password");
+
+                var data =
+                       "username=" + encodeURIComponent(username.value)
+                    + "&password=" + encodeURIComponent(password.value)
+
+                try {
+
+                    // Log in
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "login", false);
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.send(data);
+
+                    // Handle failures
+                    if (xhr.status != 200)
+                        throw new Error("Invalid login");
+
+                    resetUI();
+
+                }
+                catch (e) {
+
+                    var loginError = document.getElementById("login-error");
+
+                    // Display error, reset and refocus password field
+                    loginError.textContent = e.message;
+                    password.value = "";
+                    password.focus();
+
+                    return false;
+
+                }
+
+                // On success, hide loginUI, get and show connection list.
+                return false;
+
+            }
+
+            resetUI();
+
+            /* ]]> */ </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<!--
+    Guacamole - Clientless Remote Desktop
+    Copyright (C) 2010  Michael Jumper
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <link rel="icon" type="image/png" href="images/guacamole-logo-64.png"/>
+        <link rel="stylesheet" type="text/css" href="styles/client.css"/>
+        <link rel="stylesheet" type="text/css" href="styles/keyboard.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <title>Guacamole ${project.version}</title>
+    </head>
+
+    <body>
+
+        <!-- Menu -->
+        <div id="menu">
+
+            <!-- Clipboard -->
+            <button id="showClipboard">Show Clipboard</button>
+            <div id="clipboardDiv">
+                <h2>Clipboard</h2>
+                <p>
+                Text copied/cut within Guacamole will appear here. Changes to the text will affect the remote clipboard, and will be pastable within the remote desktop. Use the textbox below as an interface between the client and server clipboards.
+                </p>
+                <textarea rows="10" cols="40" id="clipboard"></textarea>
+            </div>
+
+            <button id="showKeyboard">Show Keyboard</button>
+            <button id="ctrlAltDelete">Ctrl-Alt-Delete</button>
+            <button id="logout">Logout</button>
+
+            <!-- Logo and status -->
+            <img id="status-logo" class="logo" src="images/guacamole-logo-24.png" alt="Guacamole" title="Guacamole ${project.version}"/>
+
+        </div>
+
+
+        <!-- Display -->
+        <div id="display">
+            
+            <!-- Menu trigger -->
+            <div id="menuControl"></div>
+
+        </div>
+
+        <!-- On-screen keyboard -->
+        <div id="keyboardContainer"></div>
+
+        <!-- Dimensional clone of viewport -->
+        <div id="viewportClone"/>
+
+        <!-- Dialogs -->
+        <div class="dialogOuter">
+            <div class="dialogMiddle">
+
+                <!-- Status Dialog -->
+                <div id="statusDialog" class="dialog">
+                    <p id="statusText"></p>
+                    <div class="buttons"><button id="reconnect">Reconnect</button></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- guacamole-common-js scripts -->
+        <script type="text/javascript" src="guacamole-common-js/keyboard.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/mouse.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/layer.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/tunnel.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/guacamole.js"></script>
+        <script type="text/javascript" src="guacamole-common-js/oskeyboard.js"></script>
+
+        <!-- guacamole-default-webapp scripts -->
+        <script type="text/javascript" src="scripts/interface.js"></script>
+
+        <!-- Init -->
+        <script type="text/javascript"> /* <![CDATA[ */
+
+            // Start connect after control returns from onload (allow browser
+            // to consider the page loaded).
+            window.onload = function() {
+                window.setTimeout(function() {
+
+                    // Instantiate client
+                    var guac = new Guacamole.Client(
+                        new Guacamole.HTTPTunnel("tunnel")
+                    );
+
+                    // Add client to UI
+                    guac.getDisplay().className = "software-cursor";
+                    GuacamoleUI.display.appendChild(guac.getDisplay());
+
+                    // Tie UI to client
+                    GuacamoleUI.attach(guac);
+
+                    try {
+
+                        // Get ID
+                        var id = window.location.search.substring(1);
+
+                        // Connect client
+                        guac.connect("id=" + id);
+
+                    }
+                    catch (e) {
+                        GuacamoleUI.showError(e.message);
+                    }
+
+                }, 0);
+            };
+
+        /* ]]> */ </script>
+
+    </body>
+
+</html>

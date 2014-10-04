@@ -1,0 +1,68 @@
+
+------------------------------------------------------------
+ About this README
+------------------------------------------------------------
+
+This README is intended to provide quick and to-the-point documentation for
+technical users intending to compile parts of Guacamole themselves.
+
+Distribution-specific packages are available from the files section of the main
+project page:
+ 
+    http://sourceforge.net/projects/guacamole/files/
+
+Distribution-specific documentation is provided on the Guacamole wiki:
+
+    http://guac-dev.org/
+
+
+------------------------------------------------------------
+ What is guacamole-auth-ulteo-ovd?
+------------------------------------------------------------
+
+guacamole-auth-ovd is a module to authenticate as Ulteo Open Virtual Desktop
+central authentication. OVD auth handles by itself static users, LDAP, mysql 
+or AD domains.
+
+
+------------------------------------------------------------
+ Compiling and installing guacamole-auth-ovd
+------------------------------------------------------------
+
+guacamole-auth-ovd is built using Maven. Building guacamole-auth-ldap
+compiles all classes and packages them into a redistributable .jar file. This
+.jar file can be installed in the library directory configured in
+guacamole.properties such that the authentication provider is available.
+
+1) Run mvn package
+
+    $ mvn package
+
+    Maven will download any needed dependencies for building the .jar file.
+    Once all dependencies have been downloaded, the .jar file will be
+    created in the target/ subdirectory of the current directory.
+
+2) Copy the .jar file into the library directory specified in your
+   guacamole.properties
+
+    You will likely need to do this as root.
+
+    If you do not have a library directory configured in your
+    guacamole.properties, you will need to specify one. The directory
+    is specified using the "lib-directory" property.
+
+4) Configure guacamole.properties for OVD
+
+    # Use LDAP authentication
+    auth-provider: net.sourceforge.guacamole.net.auth.ovd.UlteoOVDAuthentication
+
+
+------------------------------------------------------------
+ Reporting problems
+------------------------------------------------------------
+
+Please report any bugs encountered by opening a new ticket at the Trac system
+hosted at:
+    
+    http://guac-dev.org/trac/
+

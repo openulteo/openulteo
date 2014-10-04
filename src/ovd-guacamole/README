@@ -1,0 +1,13 @@
+# apt-get install maven2 autoconf automake libtool libcairo2-dev libfreerdp-dev openjdk-6-jdk git-core checkinstall build-essential cmake libssl-dev libx11-dev libxext-dev libxinerama-dev libxcursor-dev libxdamage-dev libxv-dev libxkbfile-dev libasound2-dev libcups2-dev libxml2 libxml2-dev libavutil-dev libssl-dev libavcodec-dev
+
+# To compile on centos :
+# yum install libpng-devel cairo-devel
+ 
+# install maven on centos (take the last version 3.1.1.
+# wget http://mirror.apache-kr.org/maven/maven-3/3.1.0/binaries/apache-maven-3.1.0-bin.tar.gz
+# sudo tar xzf apache-maven-3.1.0-bin.tar.gz -C /usr/local
+# cd /usr/local
+# sudo ln -s apache-maven-3.1.0 maven
+
+export M2_HOME=/usr/local/maven
+export PATH=${M2_HOME}/bin:${PATH}

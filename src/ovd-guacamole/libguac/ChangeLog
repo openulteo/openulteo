@@ -1,0 +1,31 @@
+2011-05-04 Michael Jumper <zhangmaike@users.sourceforge.net>
+
+	* Buffer/layer allocation and pooling fixes
+	* Automatic PNG palletization
+	* Fix error reporting
+	* Add log handlers for guac_client_plugin_get_client()
+	* Add layer and drawing instructions
+	* Reorganized source
+	* Raster operations
+	* Cacheable cursors
+
+2011-12-11 Michael Jumper <zhangmaike@users.sourceforge.net>
+
+	* Added functions for alloc/free of layers and buffers
+	* Added "clip" instruction
+	* New, more efficient instruction format
+	* Fixed guac_write_base64 to match docs
+	* Added guac_error for error reporting and logging
+	* Consistent naming conventions
+	* Migrated daemon-specific functionality to guacd
+	* Made private members of structs private (using double-underscore prefix)
+
+2011-03-14 Michael Jumper <zhangmaike@users.sourceforge.net>
+
+	* Lag control ("sync" message)
+	* Automatic message handle frequency limiting
+
+2011-02-28 Michael Jumper <zhangmaike@users.sourceforge.net>
+
+	* Initial release
+

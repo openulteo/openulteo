@@ -1,0 +1,118 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2009-2012 Ulteo SAS
+# http://www.ulteo.com
+# Author Gauvain POCENTEK <gauvain@ulteo.com> 2009
+# Author Julien LANGLOIS <julien@ulteo.com> 2010, 2011, 2012
+# Author David PHAM-VAN <d.pham-van@ulteo.com> 2012
+#
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import os
+import sys
+import time
+
+from ovd_shells.Config import Config
+from ovd_shells.OvdAppChannel import OvdAppChannel
+from ovd_shells.Platform import _platform as Platform
+from ovd_shells.Platform.Drives import Drives
+from ovd_shells.Platform.Folders import Folders
+from ovd_shells.Platform.InstancesManager import InstancesManager
+from ovd_shells.Platform.VirtualChannel import VirtualChannel
+from ovd_shells.RemoteAppsManager import RemoteAppsManager
+from ovd_shells import Util
+
+def main():
+	if os.environ.has_key("OVD_SESSION_DIR"):
+		user_sdir = os.environ["OVD_SESSION_DIR"]
+	else:
+		user_sdir = Platform.getUserSessionDir()
+		if user_sdir is None:
+			print "Exit because no OVD environment"
+			sys.exit(1)
+		
+		os.environ["OVD_SESSION_DIR"] = user_sdir
+	
+	Util.loadUserEnv(user_sdir)
+	config = Config()
+	config.load(user_sdir)
+
+	# IME customization
+	if config.use_local_ime:
+		Platform.setupIME()
+	
+	# Load profile share
+	folders = Folders(config.profile_mode)
+	folders.registerShares()
+	
+	drives = Drives()
+	
+	seamlessPid = Platform.launch("seamlessrdpshell", False)
+	
+	vchannel = VirtualChannel(OvdAppChannel.NAME)
+	tryOpenChannel(vchannel)
+	
+	vchannel.Write(OvdAppChannel.getInitPacket())
+	
+	im = InstancesManager()
+	im.setDrivesDB(drives)
+	im.setSharedFolderDB(folders)
+	
+	# Script to auto starts
+	Util.manageAutoStartScripts(config, user_sdir)
+	
+	# Applications to auto starts
+	Util.manageAutoStartApplication(config, im)
+	
+	manager = RemoteAppsManager(im, vchannel, drives)
+	if config.use_known_drives:
+		manager.use_known_drives = True
+	
+	manager.start()
+	
+	Util.startModules()
+	
+	manager.loop()
+	
+	manager.stop()
+	
+	vchannel.Close()
+	
+	if seamlessPid is not None:
+		print "Killing seamless process"
+		Platform.kill(seamlessPid)
+	
+	
+	sys.exit(0)
+
+
+def tryOpenChannel(vchannel):
+	
+	for t in [0.5, 1, 2]:
+		if vchannel.Open():
+			return
+		time.sleep(t)
+		
+	if vchannel.Open():
+		return
+	
+	sys.exit(1)
+
+
+
+if __name__ == "__main__":
+	Util.redirect_to_dump()
+	main()

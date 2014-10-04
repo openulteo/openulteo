@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+#export DH_VERBOSE=1
+DEB_DH_INSTALL_SOURCEDIR = $(CURDIR)/debian-tmp
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+build-arch:
+	make BUILD_DIR=$(DEB_DH_INSTALL_SOURCEDIR)
+
+binary-install/ulteo-ovd-guacamole::
+	cp -r $(DEB_DH_INSTALL_SOURCEDIR)/* $(DEB_DESTDIR)
+	mv $(DEB_DESTDIR)/etc/init.d/guacd.debian $(DEB_DESTDIR)/etc/init.d/guacd
+	rm $(DEB_DESTDIR)/etc/init.d/guacd.*
+
+clean::
+	make BUILD_DIR=$(DEB_DH_INSTALL_SOURCEDIR) clean
